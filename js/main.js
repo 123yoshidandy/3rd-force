@@ -91,6 +91,21 @@ function init() {
             index++;
         }
     }
+
+    var selectTeamA = document.getElementById("teamA.select");
+    for (var i of ["sample", "random"]) {
+        var optionElement = document.createElement("option");
+        optionElement.textContent = i;
+        optionElement.value = i;
+        selectTeamA.appendChild(optionElement);
+    }
+    var selectTeamB = document.getElementById("teamB.select");
+    for (var i of ["sample", "random"]) {
+        var optionElement = document.createElement("option");
+        optionElement.textContent = i;
+        optionElement.value = i;
+        selectTeamB.appendChild(optionElement);
+    }
 }
 
 function view() {
@@ -193,7 +208,9 @@ function attack_area() {
 }
 
 async function command() {
-    const module1 = await import('./tactics/sample.js');
+    let element1 = document.getElementById('teamA.select');
+    const path1 = "./tactics/" + element1.value + ".js";
+    const module1 = await import(path1);
     const tactics1 = new module1.Tactics();
     const result1= tactics1.exec(state.time, state.teamA, state.teamB);
 
@@ -206,7 +223,9 @@ async function command() {
         state.teamB.characters[i].y = HEIGHT - 1 - state.teamB.characters[i].y;
     }
 
-    const module2 = await import('./tactics/random.js');
+    let element2 = document.getElementById('teamB.select');
+    const path2 = "./tactics/" + element2.value + ".js";
+    const module2 = await import(path2);
     const tactics2 = new module2.Tactics();
     const result2 = tactics2.exec(state.time, state.teamB, state.teamA);
 
