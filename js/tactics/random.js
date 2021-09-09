@@ -1,5 +1,5 @@
 export class Tactics {
-    exec(state) {
+    exec(time, friend, enemy) {
         var height = 10;
         var types = ["r", "g", "y"];
 

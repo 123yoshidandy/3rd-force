@@ -1,35 +1,27 @@
 body {
+    width: 1000px;
+    height: 1000px;
     background-color: #263238;
-}
-
-h1 {
     color: #FFFFFF;
-}
-
-h2 {
-    color: #FFFFFF;
-}
-
-.board {
-    width: 1000px; /* 表の幅 */
-    height: 500px; /* 表の高さ */
-    /* 中央揃えにする */
     margin-left: auto;
     margin-right: auto;
-    display: flex;
+    
+}
+
+.score_table {
+    width: 1000px;
+    height: 200px;
 }
 
 .field_table {
-    width: 1000px; /* 表の幅 */
-    height: 500px; /* 表の高さ */
-    /* 中央揃えにする */
-    margin-left: auto;
-    margin-right: auto;
+    width: 1000px;
+    height: 500px;
+    color: #000000;
 }
 
 td {
-    width: 50px; /* セルの幅 */
-    height: 50px; /* セルの高さ */
+    width: 50px;
+    height: 50px;
     background-color: #455A64; /* 背景色 */
 }
 

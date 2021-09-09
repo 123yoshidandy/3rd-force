@@ -1,5 +1,6 @@
 export class Tactics {
-    command(state) {
+    command(time, friend, enemy) {
+
         return [
             [0, "r"],
         ]

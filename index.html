@@ -7,14 +7,14 @@
     </head>
     <body>
         <h1 id="title_text">3rd force</h1>
-        <h2 id="time_text">time: -</h2>
-        <h2 id="lifeA_text">lifeA: -</h2>
-        <h2 id="moneyA_text">moneyA: -</h2>
-        <h2 id="lifeB_text">lifeB: -</h2>
-        <h2 id="moneyB_text">moneyB: -</h2>
-        <div class="board">
-            <table id="field_table" class="field_table"></table>
-        </div>
+        <h2 id="time_text">-</h2>
+        <table id="score_table" class="score_table">
+            <tr> <td></td>      <td>TeamA</td>              <td>TeamB</td>              </tr>
+            <tr> <td>Life</td>  <td id="teamA.life">-</td>  <td id="teamB.life">-</td>  </tr>
+            <tr> <td>Money</td> <td id="teamA.money">-</td> <td id="teamB.money">-</td> </tr>
+        </table>
+        <p></p>
+        <table id="field_table" class="field_table"></table>
         <script src="./js/main.js"></script>
     </body>
 </html>
