@@ -37,6 +37,7 @@ export class Tactics {
             }
             if (none) {
                 result.push([y, "r"]);
+                break;
             }
         }
 

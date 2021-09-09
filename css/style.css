@@ -11,6 +11,7 @@ body {
 .score_table {
     width: 1000px;
     height: 200px;
+    font-size:30px;
 }
 
 .field_table {
@@ -19,8 +20,12 @@ body {
     color: #000000;
 }
 
+input {
+    font-size:25px;
+}
+
 select {
-    font-size:30px;
+    font-size:25px;
 }
 
 td {

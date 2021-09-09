@@ -26,25 +26,13 @@ const CHARACTER_TYPES = {
     },
 };
 
-var state = {
-    time: 0,
-    teamA: {
-        life: 1000,
-        money: 1000,
-        characters : [],
-    },
-    teamB: {
-        life: 1000,
-        money: 1000,
-        characters : [],
-    },
-    winner: null,
-}
-
+var state = {};
 var cells = [];
 
 
 init();
+restart();
+
 var timer = setInterval(function () {
     if (state.time % 2 == 0) {
         move();
@@ -76,7 +64,6 @@ function init() {
         var tr = document.createElement("tr");
         for (var col = 0; col < WIDTH; col++) {
             var td = document.createElement("td");
-            td.className = "";
             tr.appendChild(td);
         }
         tableElement.appendChild(tr);
@@ -105,6 +92,23 @@ function init() {
         optionElement.textContent = i;
         optionElement.value = i;
         selectTeamB.appendChild(optionElement);
+    }
+}
+
+function restart() {
+    state = {
+        time: 0,
+        teamA: {
+            life: 1000,
+            money: 1000,
+            characters : [],
+        },
+        teamB: {
+            life: 1000,
+            money: 1000,
+            characters : [],
+        },
+        winner: null,
     }
 }
 
