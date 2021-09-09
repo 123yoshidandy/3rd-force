@@ -193,7 +193,7 @@ function attack_area() {
 }
 
 async function command() {
-    const module1 = await import('./tactics/random.js');
+    const module1 = await import('./tactics/sample.js');
     const tactics1 = new module1.Tactics();
     const result1= tactics1.exec(state.time, state.teamA, state.teamB);
 
@@ -224,7 +224,7 @@ async function command() {
     }
 
     for (var i = 0; i < result2.length; i++) {
-        generate(WIDTH - 1, result2[i][0], "teamB", result2[i][1]);
+        generate(WIDTH - 1, HEIGHT - 1 - result2[i][0], "teamB", result2[i][1]);
     }
 }
 
