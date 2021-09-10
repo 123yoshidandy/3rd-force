@@ -107,65 +107,65 @@ function view() {
     ctx.fillStyle = "#455A64";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    for (var i = 0; i < state.teamA.characters.length; i++) {
-        ctx.fillStyle = CHARACTER_TYPES[state.teamA.characters[i].type].color;
+    for (var character of state.teamA.characters) {
+        ctx.fillStyle = CHARACTER_TYPES[character.type].color;
         ctx.beginPath();
-        ctx.moveTo(50 * state.teamA.characters[i].x + 10, 50 * state.teamA.characters[i].y + 10);
-        ctx.lineTo(50 * state.teamA.characters[i].x + 10, 50 * state.teamA.characters[i].y + 40);
-        ctx.lineTo(50 * state.teamA.characters[i].x + 40, 50 * state.teamA.characters[i].y + 25);
+        ctx.moveTo(50 * character.x + 10, 50 * character.y + 10);
+        ctx.lineTo(50 * character.x + 10, 50 * character.y + 40);
+        ctx.lineTo(50 * character.x + 40, 50 * character.y + 25);
         ctx.closePath();
         ctx.fill();
     }
-    for (var i = 0; i < state.teamB.characters.length; i++) {
-        ctx.fillStyle = CHARACTER_TYPES[state.teamB.characters[i].type].color;
+    for (var character of state.teamB.characters) {
+        ctx.fillStyle = CHARACTER_TYPES[character.type].color;
         ctx.beginPath();
-        ctx.moveTo(50 * state.teamB.characters[i].x + 40, 50 * state.teamB.characters[i].y + 40);
-        ctx.lineTo(50 * state.teamB.characters[i].x + 40, 50 * state.teamB.characters[i].y + 10);
-        ctx.lineTo(50 * state.teamB.characters[i].x + 10, 50 * state.teamB.characters[i].y + 25);
+        ctx.moveTo(50 * character.x + 40, 50 * character.y + 40);
+        ctx.lineTo(50 * character.x + 40, 50 * character.y + 10);
+        ctx.lineTo(50 * character.x + 10, 50 * character.y + 25);
         ctx.closePath();
         ctx.fill();
     }
 }
 
 function move() {
-    for (var i = 0; i < state.teamA.characters.length; i++) {
-        state.teamA.characters[i].x = Math.min(state.teamA.characters[i].x + 1, WIDTH - state.teamA.characters[i].range);
+    for (var character of state.teamA.characters) {
+        character.x = Math.min(character.x + 1, WIDTH - character.range);
     }
-    for (var i = 0; i < state.teamB.characters.length; i++) {
-        state.teamB.characters[i].x = Math.max(state.teamB.characters[i].x - 1, state.teamB.characters[i].range - 1);
+    for (var character of state.teamB.characters) {
+        character.x = Math.max(character.x - 1, character.range - 1);
     }
 }
 
 function attack_enemy() {
-    for (var i = 0; i < state.teamA.characters.length; i++) {
+    for (var characterA of state.teamA.characters) {
         var targets = [];
-        for (var j = 0; j < state.teamB.characters.length; j++) {
-            if (state.teamA.characters[i].x <= state.teamB.characters[j].x
-                && state.teamB.characters[j].x <= state.teamA.characters[i].x + state.teamA.characters[i].range
-                && Math.abs(state.teamA.characters[i].y - state.teamB.characters[j].y) <= 1
+        for (var characterB of state.teamB.characters) {
+            if (characterA.x <= characterB.x
+                && characterB.x <= characterA.x + characterA.range
+                && Math.abs(characterA.y - characterB.y) <= 1
             ) {
-                targets.push(state.teamB.characters[j]);
+                targets.push(characterB);
             }
         }
         if (targets.length > 0) {
             var target = Math.floor(Math.random() * targets.length);
-            targets[target].life -= state.teamA.characters[i].attack;
+            targets[target].life -= characterA.attack;
         }
     }
 
-    for (var j = 0; j < state.teamB.characters.length; j++) {
+    for (var characterB of state.teamB.characters) {
         var targets = [];
-        for (var i = 0; i < state.teamA.characters.length; i++) {
-            if (state.teamA.characters[i].x <= state.teamB.characters[j].x
-                && state.teamB.characters[j].x - state.teamB.characters[j].range <= state.teamA.characters[i].x
-                && Math.abs(state.teamA.characters[i].y - state.teamB.characters[j].y) <= 1
+        for (var characterA of state.teamA.characters) {
+            if (characterA.x <= characterB.x
+                && characterB.x - characterB.range <= characterA.x
+                && Math.abs(characterA.y - characterB.y) <= 1
             ) {
-                targets.push(state.teamA.characters[i]);
+                targets.push(characterA);
             }
         }
         if (targets.length > 0) {
             var target = Math.floor(Math.random() * targets.length);
-            targets[target].life -= state.teamB.characters[j].attack;
+            targets[target].life -= characterB.attack;
         }
     }
 
@@ -204,13 +204,13 @@ async function command() {
     const tactics1 = new module1.Tactics();
     const result1= tactics1.exec(state.time, state.teamA, state.teamB);
 
-    for (var i = 0; i < state.teamA.characters.length; i++) {
-        state.teamA.characters[i].x = WIDTH - 1 - state.teamA.characters[i].x;
-        state.teamA.characters[i].y = HEIGHT - 1 - state.teamA.characters[i].y;
+    for (var character of state.teamA.characters) {
+        character.x = WIDTH - 1 - character.x;
+        character.y = HEIGHT - 1 - character.y;
     }
-    for (var i = 0; i < state.teamB.characters.length; i++) {
-        state.teamB.characters[i].x = WIDTH - 1 - state.teamB.characters[i].x;
-        state.teamB.characters[i].y = HEIGHT - 1 - state.teamB.characters[i].y;
+    for (var character of state.teamB.characters) {
+        character.x = WIDTH - 1 - character.x;
+        character.y = HEIGHT - 1 - character.y;
     }
 
     let element2 = document.getElementById('teamB.select');
@@ -219,21 +219,21 @@ async function command() {
     const tactics2 = new module2.Tactics();
     const result2 = tactics2.exec(state.time, state.teamB, state.teamA);
 
-    for (var i = 0; i < state.teamA.characters.length; i++) {
-        state.teamA.characters[i].x = WIDTH - 1 - state.teamA.characters[i].x;
-        state.teamA.characters[i].y = HEIGHT - 1 - state.teamA.characters[i].y;
+    for (var character of state.teamA.characters) {
+        character.x = WIDTH - 1 - character.x;
+        character.y = HEIGHT - 1 - character.y;
     }
-    for (var i = 0; i < state.teamB.characters.length; i++) {
-        state.teamB.characters[i].x = WIDTH - 1 - state.teamB.characters[i].x;
-        state.teamB.characters[i].y = HEIGHT - 1 - state.teamB.characters[i].y;
-    }
-
-    for (var i = 0; i < result1.length; i++) {
-        generate(0, result1[i][0], "teamA", result1[i][1]);
+    for (var character of state.teamB.characters) {
+        character.x = WIDTH - 1 - character.x;
+        character.y = HEIGHT - 1 - character.y;
     }
 
-    for (var i = 0; i < result2.length; i++) {
-        generate(WIDTH - 1, HEIGHT - 1 - result2[i][0], "teamB", result2[i][1]);
+    for (var result of result1) {
+        generate(0, result[0], "teamA", result[1]);
+    }
+
+    for (var result of result2) {
+        generate(WIDTH - 1, HEIGHT - 1 - result[0], "teamB", result[1]);
     }
 }
 
