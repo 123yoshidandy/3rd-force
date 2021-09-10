@@ -1,5 +1,5 @@
 const HEIGHT =10;
-const WIDTH = 20;
+const WIDTH = 200;
 const TD_SKIP = 9;
 
 const CHARACTER_TYPES = {
@@ -15,7 +15,7 @@ const CHARACTER_TYPES = {
         type: "g",
         life: 400,
         attack: 200,
-        range: 2,
+        range: 20,
         cost: 1000,
         color: "green",
     },
@@ -23,7 +23,7 @@ const CHARACTER_TYPES = {
         type: "y",
         life: 200,
         attack: 50,
-        range: 4,
+        range: 40,
         cost: 1000,
         color: "yellow",
     },
@@ -42,8 +42,8 @@ var timer = setInterval(function () {
     } else if (state.time % 2 == 1) {
         attack_enemy();
         attack_area();
-        state.teamA.money += 100;
-        state.teamB.money += 100;
+        state.teamA.money += 10;
+        state.teamB.money += 10;
     }
 
     view();
@@ -58,7 +58,7 @@ var timer = setInterval(function () {
     }
 
     state.time++;
-}, 100);
+}, 10);
 
 function init() {
     var selectTeamA = document.getElementById("teamA.select");
@@ -110,18 +110,18 @@ function view() {
     for (var character of state.teamA.characters) {
         ctx.fillStyle = CHARACTER_TYPES[character.type].color;
         ctx.beginPath();
-        ctx.moveTo(50 * character.x + 10, 50 * character.y + 10);
-        ctx.lineTo(50 * character.x + 10, 50 * character.y + 40);
-        ctx.lineTo(50 * character.x + 40, 50 * character.y + 25);
+        ctx.moveTo(5 * character.x + 10, 50 * character.y + 10);
+        ctx.lineTo(5 * character.x + 10, 50 * character.y + 40);
+        ctx.lineTo(5 * character.x + 40, 50 * character.y + 25);
         ctx.closePath();
         ctx.fill();
     }
     for (var character of state.teamB.characters) {
         ctx.fillStyle = CHARACTER_TYPES[character.type].color;
         ctx.beginPath();
-        ctx.moveTo(50 * character.x + 40, 50 * character.y + 40);
-        ctx.lineTo(50 * character.x + 40, 50 * character.y + 10);
-        ctx.lineTo(50 * character.x + 10, 50 * character.y + 25);
+        ctx.moveTo(5 * character.x + 40, 50 * character.y + 40);
+        ctx.lineTo(5 * character.x + 40, 50 * character.y + 10);
+        ctx.lineTo(5 * character.x + 10, 50 * character.y + 25);
         ctx.closePath();
         ctx.fill();
     }
@@ -129,10 +129,10 @@ function view() {
 
 function move() {
     for (var character of state.teamA.characters) {
-        character.x = Math.min(character.x + 1, WIDTH - character.range);
+        character.x = Math.min(character.x + 1, WIDTH - 10 - character.range);
     }
     for (var character of state.teamB.characters) {
-        character.x = Math.max(character.x - 1, character.range - 1);
+        character.x = Math.max(character.x - 1, character.range);
     }
 }
 
@@ -183,14 +183,14 @@ function attack_enemy() {
 
 function attack_area() {
     for (var i = state.teamA.characters.length - 1; i >= 0; i--) {
-        if (state.teamA.characters[i].type == "r" && state.teamA.characters[i].x == WIDTH - 1) {
+        if (state.teamA.characters[i].type == "r" && state.teamA.characters[i].x == WIDTH - 10 - 1) {
             state.teamB.life -= state.teamA.characters[i].attack;
             state.teamA.characters.splice(i, 1);
         }
     }
 
     for (var i = state.teamB.characters.length - 1; i >= 0; i--) {
-        if (state.teamB.characters[i].type == "r" && state.teamB.characters[i].x == 0) {
+        if (state.teamB.characters[i].type == "r" && state.teamB.characters[i].x == 1) {
             state.teamA.life -= state.teamB.characters[i].attack;
             state.teamB.characters.splice(i, 1);
         }
