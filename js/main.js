@@ -114,9 +114,9 @@ function restart() {
 
 function view() {
     document.getElementById("time_text").textContent = "time  : " + state.time;
-    document.getElementById("teamA.life").innerText = state.teamA.life;
+    document.getElementById("teamA.life").value = state.teamA.life;
     document.getElementById("teamA.money").innerText = state.teamA.money;
-    document.getElementById("teamB.life").innerText = state.teamB.life;
+    document.getElementById("teamB.life").value = state.teamB.life;
     document.getElementById("teamB.money").innerText = state.teamB.money;
 
     for (var row = 0; row < HEIGHT; row++) {

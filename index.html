@@ -14,8 +14,16 @@
                 <td><select id="teamA.select"></select></td>
                 <td><select id="teamB.select"></select></td>
             </tr>
-            <tr> <td>Life</td>  <td id="teamA.life">-</td>  <td id="teamB.life">-</td>  </tr>
-            <tr> <td>Money</td> <td id="teamA.money">-</td> <td id="teamB.money">-</td> </tr>
+            <tr>
+                <td>Life</td>
+                <td><meter id="teamA.life" min="0" max="1000" low="301" high="701" optimum="900" value="1000"></meter></td>
+                <td><meter id="teamB.life" min="0" max="1000" low="301" high="701" optimum="900" value="1000"></meter></td>
+            </tr>
+            <tr>
+                <td>Money</td>
+                <td id="teamA.money">-</td>
+                <td id="teamB.money">-</td>
+            </tr>
         </table>
         <p></p>
         <table id="field_table" class="field_table"></table>
