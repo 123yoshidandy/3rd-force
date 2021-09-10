@@ -14,12 +14,6 @@ body {
     font-size:30px;
 }
 
-.field_table {
-    width: 1000px;
-    height: 500px;
-    color: #000000;
-}
-
 input {
     font-size:25px;
 }
@@ -29,23 +23,5 @@ select {
 }
 
 td {
-    width: 50px;
-    height: 50px;
     background-color: #455A64; /* 背景色 */
-}
-
-.r {
-    background-color: #FF0000; /* red */
-}
-
-.g {
-    background-color: #00FF00; /* green */
-}
-
-.y {
-    background-color: #FFFF00; /* green */
-}
-
-.b {
-    background-color: #111111; /* black */
 }

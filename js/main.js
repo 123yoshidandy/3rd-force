@@ -9,6 +9,7 @@ const CHARACTER_TYPES = {
         attack: 100,
         range: 1,
         cost: 500,
+        color: "red",
     },
     g: {
         type: "g",
@@ -16,6 +17,7 @@ const CHARACTER_TYPES = {
         attack: 200,
         range: 2,
         cost: 1000,
+        color: "green",
     },
     y: {
         type: "y",
@@ -23,11 +25,11 @@ const CHARACTER_TYPES = {
         attack: 50,
         range: 4,
         cost: 1000,
+        color: "yellow",
     },
 };
 
 var state = {};
-var cells = [];
 
 
 init();
@@ -59,26 +61,6 @@ var timer = setInterval(function () {
 }, 100);
 
 function init() {
-    var tableElement = document.getElementById("field_table");
-    for (var row = 0; row < HEIGHT; row++) {
-        var tr = document.createElement("tr");
-        for (var col = 0; col < WIDTH; col++) {
-            var td = document.createElement("td");
-            tr.appendChild(td);
-        }
-        tableElement.appendChild(tr);
-    }
-
-    var td_array = document.getElementsByTagName("td");
-    var index = 0;
-    for (var row = 0; row < HEIGHT; row++) {
-        cells.push([]);
-        for (var col = 0; col < WIDTH; col++) {
-            cells[row].push(td_array[TD_SKIP + index]);
-            index++;
-        }
-    }
-
     var selectTeamA = document.getElementById("teamA.select");
     for (var i of ["sample", "random"]) {
         var optionElement = document.createElement("option");
@@ -119,25 +101,29 @@ function view() {
     document.getElementById("teamB.life").value = state.teamB.life;
     document.getElementById("teamB.money").innerText = state.teamB.money;
 
-    for (var row = 0; row < HEIGHT; row++) {
-        for (var col = 0; col < WIDTH; col++) {
-            cells[row][col].className = "";
-            cells[row][col].style.border = "0px solid";
-            cells[row][col].innerText = "";
-        }
-    }
+    const canvas = document.getElementById('field_canvas');
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "#455A64";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     for (var i = 0; i < state.teamA.characters.length; i++) {
-        cells[state.teamA.characters[i].y][state.teamA.characters[i].x].className = state.teamA.characters[i].type;
-        cells[state.teamA.characters[i].y][state.teamA.characters[i].x].innerText = "│▶";
+        ctx.fillStyle = CHARACTER_TYPES[state.teamA.characters[i].type].color;
+        ctx.beginPath();
+        ctx.moveTo(50 * state.teamA.characters[i].x + 10, 50 * state.teamA.characters[i].y + 10);
+        ctx.lineTo(50 * state.teamA.characters[i].x + 10, 50 * state.teamA.characters[i].y + 40);
+        ctx.lineTo(50 * state.teamA.characters[i].x + 40, 50 * state.teamA.characters[i].y + 25);
+        ctx.closePath();
+        ctx.fill();
     }
     for (var i = 0; i < state.teamB.characters.length; i++) {
-        if (cells[state.teamB.characters[i].y][state.teamB.characters[i].x].className != "") {
-            cells[state.teamB.characters[i].y][state.teamB.characters[i].x].className = "b";
-            cells[state.teamB.characters[i].y][state.teamB.characters[i].x].innerText = "▶◀";
-        }
-        cells[state.teamB.characters[i].y][state.teamB.characters[i].x].className = state.teamB.characters[i].type;
-        cells[state.teamB.characters[i].y][state.teamB.characters[i].x].innerText = "◀│";
+        ctx.fillStyle = CHARACTER_TYPES[state.teamB.characters[i].type].color;
+        ctx.beginPath();
+        ctx.moveTo(50 * state.teamB.characters[i].x + 40, 50 * state.teamB.characters[i].y + 40);
+        ctx.lineTo(50 * state.teamB.characters[i].x + 40, 50 * state.teamB.characters[i].y + 10);
+        ctx.lineTo(50 * state.teamB.characters[i].x + 10, 50 * state.teamB.characters[i].y + 25);
+        ctx.closePath();
+        ctx.fill();
     }
 }
 
