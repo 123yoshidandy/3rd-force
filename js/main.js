@@ -7,24 +7,27 @@ const CHARACTER_TYPES = {
         type: "r",
         life: 100,
         attack: 100,
-        range: 1,
+        range: 10,
         cost: 500,
+        destination: WIDTH,
         color: "red",
     },
     g: {
         type: "g",
         life: 400,
-        attack: 200,
+        attack: 50,
         range: 20,
         cost: 1000,
+        destination: WIDTH - 20,
         color: "green",
     },
     y: {
         type: "y",
         life: 200,
-        attack: 50,
+        attack: 10,
         range: 40,
         cost: 1000,
+        destination: WIDTH - 40,
         color: "yellow",
     },
 };
@@ -62,14 +65,14 @@ var timer = setInterval(function () {
 
 function init() {
     var selectTeamA = document.getElementById("teamA.select");
-    for (var i of ["sample", "random"]) {
+    for (var i of ["random", "sample"]) {
         var optionElement = document.createElement("option");
         optionElement.textContent = i;
         optionElement.value = i;
         selectTeamA.appendChild(optionElement);
     }
     var selectTeamB = document.getElementById("teamB.select");
-    for (var i of ["sample", "random"]) {
+    for (var i of ["random", "sample"]) {
         var optionElement = document.createElement("option");
         optionElement.textContent = i;
         optionElement.value = i;
@@ -104,35 +107,27 @@ function view() {
     const canvas = document.getElementById('field_canvas');
     const ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = "#455A64";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    for (var character of state.teamA.characters) {
-        ctx.fillStyle = CHARACTER_TYPES[character.type].color;
-        ctx.beginPath();
-        ctx.moveTo(5 * character.x + 10, 50 * character.y + 10);
-        ctx.lineTo(5 * character.x + 10, 50 * character.y + 40);
-        ctx.lineTo(5 * character.x + 40, 50 * character.y + 25);
-        ctx.closePath();
-        ctx.fill();
+    for (var x = 0; x < 20; x++) {
+        for (var y = 0; y < 10; y++) {
+            ctx.fillStyle = "#455A64";
+            ctx.fillRect(x * 50, y * 50, 49, 49);
+        }
     }
-    for (var character of state.teamB.characters) {
+
+    for (var character of state.teamA.characters.concat(state.teamB.characters)) {
         ctx.fillStyle = CHARACTER_TYPES[character.type].color;
-        ctx.beginPath();
-        ctx.moveTo(5 * character.x + 40, 50 * character.y + 40);
-        ctx.lineTo(5 * character.x + 40, 50 * character.y + 10);
-        ctx.lineTo(5 * character.x + 10, 50 * character.y + 25);
-        ctx.closePath();
-        ctx.fill();
+        ctx.fillRect(5 * character.x, 50 * character.y, 5, 50);
     }
 }
 
 function move() {
-    for (var character of state.teamA.characters) {
-        character.x = Math.min(character.x + 1, WIDTH - 10 - character.range);
-    }
-    for (var character of state.teamB.characters) {
-        character.x = Math.max(character.x - 1, character.range);
+    for (var character of state.teamA.characters.concat(state.teamB.characters)) {
+        if (character.x < character.destination) {
+            character.x++;
+        } else if (character.x > character.destination) {
+            character.x--;
+        }
     }
 }
 
@@ -183,14 +178,14 @@ function attack_enemy() {
 
 function attack_area() {
     for (var i = state.teamA.characters.length - 1; i >= 0; i--) {
-        if (state.teamA.characters[i].type == "r" && state.teamA.characters[i].x == WIDTH - 10 - 1) {
+        if (state.teamA.characters[i].type == "r" && state.teamA.characters[i].x >= WIDTH - 1) {
             state.teamB.life -= state.teamA.characters[i].attack;
             state.teamA.characters.splice(i, 1);
         }
     }
 
     for (var i = state.teamB.characters.length - 1; i >= 0; i--) {
-        if (state.teamB.characters[i].type == "r" && state.teamB.characters[i].x == 1) {
+        if (state.teamB.characters[i].type == "r" && state.teamB.characters[i].x <= 0) {
             state.teamA.life -= state.teamB.characters[i].attack;
             state.teamB.characters.splice(i, 1);
         }
@@ -204,11 +199,7 @@ async function command() {
     const tactics1 = new module1.Tactics();
     const result1= tactics1.exec(state.time, state.teamA, state.teamB);
 
-    for (var character of state.teamA.characters) {
-        character.x = WIDTH - 1 - character.x;
-        character.y = HEIGHT - 1 - character.y;
-    }
-    for (var character of state.teamB.characters) {
+    for (var character of state.teamA.characters.concat(state.teamB.characters)) {
         character.x = WIDTH - 1 - character.x;
         character.y = HEIGHT - 1 - character.y;
     }
@@ -219,31 +210,37 @@ async function command() {
     const tactics2 = new module2.Tactics();
     const result2 = tactics2.exec(state.time, state.teamB, state.teamA);
 
-    for (var character of state.teamA.characters) {
-        character.x = WIDTH - 1 - character.x;
-        character.y = HEIGHT - 1 - character.y;
-    }
-    for (var character of state.teamB.characters) {
+    for (var character of state.teamA.characters.concat(state.teamB.characters)) {
         character.x = WIDTH - 1 - character.x;
         character.y = HEIGHT - 1 - character.y;
     }
 
     for (var result of result1) {
-        generate(0, result[0], "teamA", result[1]);
+        generate("teamA", result[1], result[0]);
     }
 
     for (var result of result2) {
-        generate(WIDTH - 1, HEIGHT - 1 - result[0], "teamB", result[1]);
+        generate("teamB", result[1], HEIGHT - 1 - result[0]);
     }
 }
 
-function generate(x, y, team, type) {
+function generate(team, type, y) {
     if (state[team].money >= CHARACTER_TYPES[type].cost) {
+
+        var x = 0;
+        var destination = CHARACTER_TYPES[type].destination;
+        if (team == "teamB") {
+            x = WIDTH;
+            destination = WIDTH - destination;
+        }
+
         state[team].characters.push({
+            team: team,
             type: type,
             life: CHARACTER_TYPES[type].life,
             attack: CHARACTER_TYPES[type].attack,
             range: CHARACTER_TYPES[type].range,
+            destination: destination,
             x: x,
             y: y,
         });
