@@ -1,6 +1,6 @@
 export class Tactics {
     exec(time, friend, enemy) {
-        var height = 10;
+        var height = 100;
         var types = ["r", "g", "y"];
 
         return [

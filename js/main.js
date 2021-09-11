@@ -1,6 +1,5 @@
-const HEIGHT =10;
 const WIDTH = 200;
-const TD_SKIP = 9;
+const HEIGHT = 100;
 
 const CHARACTER_TYPES = {
     r: {
@@ -117,7 +116,7 @@ function view() {
 
     for (var character of state.teamA.characters.concat(state.teamB.characters)) {
         ctx.fillStyle = CHARACTER_TYPES[character.type].color;
-        ctx.fillRect(5 * character.x, 50 * character.y, 5, 50);
+        ctx.fillRect(5 * character.x, 5 * character.y, 5, 50);
     }
 }
 
@@ -137,7 +136,7 @@ function attack_enemy() {
         for (var characterB of state.teamB.characters) {
             if (characterA.x <= characterB.x
                 && characterB.x <= characterA.x + characterA.range
-                && Math.abs(characterA.y - characterB.y) <= 1
+                && Math.abs(characterA.y - characterB.y) <= 10
             ) {
                 targets.push(characterB);
             }
@@ -153,7 +152,7 @@ function attack_enemy() {
         for (var characterA of state.teamA.characters) {
             if (characterA.x <= characterB.x
                 && characterB.x - characterB.range <= characterA.x
-                && Math.abs(characterA.y - characterB.y) <= 1
+                && Math.abs(characterA.y - characterB.y) <= 10
             ) {
                 targets.push(characterA);
             }
