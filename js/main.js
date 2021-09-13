@@ -35,35 +35,10 @@ const CHARACTER_TYPES = {
 };
 
 var state = {};
-
+var timer = null;
 
 init();
 restart();
-
-var timer = setInterval(function () {
-    if (state.time % 2 == 0) {
-        move();
-        command();
-    } else if (state.time % 2 == 1) {
-        attack_enemy();
-        attack_area();
-        state.teamA.money += 50;
-        state.teamB.money += 50;
-    }
-
-    view();
-    if (state.teamA.life <= 0) {
-        clearInterval(timer);
-        document.getElementById("time_text").textContent = "teamB is win";
-        return;
-    } else if (state.teamB.life <= 0) {
-        clearInterval(timer);
-        document.getElementById("time_text").textContent = "teamA is win";
-        return;
-    }
-
-    state.time++;
-}, 20);
 
 function init() {
     var selectTeamA = document.getElementById("teamA.select");
@@ -99,6 +74,36 @@ function restart() {
         bursted: [],
         winner: null,
     }
+
+    if (timer != null) {
+        clearInterval(timer);
+    }
+    timer = setInterval(loop, 20);
+}
+
+function loop() {
+    if (state.time % 2 == 0) {
+        move();
+        command();
+    } else if (state.time % 2 == 1) {
+        attack_enemy();
+        attack_area();
+        state.teamA.money += 50;
+        state.teamB.money += 50;
+    }
+
+    view();
+    if (state.teamA.life <= 0) {
+        clearInterval(timer);
+        document.getElementById("time_text").textContent = "teamB is win";
+        return;
+    } else if (state.teamB.life <= 0) {
+        clearInterval(timer);
+        document.getElementById("time_text").textContent = "teamA is win";
+        return;
+    }
+
+    state.time++;
 }
 
 function view() {
