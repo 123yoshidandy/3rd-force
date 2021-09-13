@@ -19,29 +19,36 @@ https://yoshida-kazuki.github.io/game-3rd-force/
 
 詳細は既存コードを参考にしてもらうものとし、手順のみ記す。
 
-1. GitHubリポジトリをfork→cloneする。
+1. GitHubリポジトリをfork→cloneする。<br>
    https://github.com/yoshida-kazuki/game-3rd-force
-2. 戦術アルゴリズムを実装する。
+2. 戦術アルゴリズムを実装する。<br>
    https://github.com/yoshida-kazuki/game-3rd-force/tree/main/js/tactics
-3. 戦術アルゴリズムをアルゴリズム一覧に追加する。
+3. 戦術アルゴリズムをアルゴリズム一覧に追加する。<br>
    https://github.com/yoshida-kazuki/game-3rd-force/blob/main/js/main.js#L3
-4. 以下などを活用し、動作検証する。
+4. 以下などを活用し、動作検証する。<br>
    https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer
 5. いい感じにできたら、yoshida-kazukiのリポジトリにプルリクエストを発行する。
 
 ## 兵器一覧
 
-| 兵器種別       | ID       | 特徴 ※[詳細](https://github.com/yoshida-kazuki/game-3rd-force/blob/main/js/main.js#L5) |
-| --            | --       | -- |
-| 歩兵          | infantry | 陣地への攻撃ができる唯一の兵器 |
-| 戦車          | tank     | 耐久力・攻撃力に優れる戦闘の要 |
-| ロケット砲     | rocket   | 攻撃力は低いが遠距離攻撃が可能 |
-| 対空ミサイル   | missile  | 航空機への攻撃が得意 |
-| 攻撃機        | attacker | コストは高いが、対地性能に優れる航空機 |
-| 戦闘機        | fighter  | コストは高いが、対空性能に優れる航空機 |
+| ID       | 兵器種別     | 特徴（[詳細はこちら](https://github.com/yoshida-kazuki/game-3rd-force/blob/main/js/main.js#L5)） |
+| --       | --          | -- |
+| infantry | 歩兵         | 陣地への攻撃ができる唯一の兵器 |
+| tank     | 戦車         | 耐久力・攻撃力に優れる戦闘の要 |
+| rocket   | ロケット砲   | 攻撃力は低いが遠距離攻撃が可能 |
+| missile  | 対空ミサイル | 航空機への攻撃が得意 |
+| attacker | 攻撃機       | コストは高いが、対地性能に優れる航空機 |
+| fighter  | 戦闘機       | コストは高いが、対空性能に優れる航空機 |
 
 ## TODO
 
 * ランキング機能の導入（戦術アルゴリズムを自動高速戦闘させ、ランキングを動的生成する）
-* 兵器間のバランス調整
-* 退却
+* 兵器間のバランス調整（戦術アルゴリズムを実装後に検討する）
+* 兵器の重なりの抑制（重ねられないようにする・重なっていると片方しか攻撃できない・重なっていると両方にダメージなど）
+* 後退時の速度低下の導入
+* 爆撃機の導入
+* 機関砲の導入
+* 退却制御の導入
+* 兵器カスタマイズの導入
+* 武器weaponの導入
+* 手動モードの導入
