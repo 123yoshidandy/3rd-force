@@ -48,7 +48,7 @@ https://yoshida-kazuki.github.io/game-3rd-force/
 * 後退時の速度低下の導入
 * 爆撃機の導入
 * 機関砲の導入
-* 退却制御の導入
+* 残弾、退却制御の導入
 * 兵器カスタマイズの導入
 * 武器weaponの導入
 * 手動モードの導入
