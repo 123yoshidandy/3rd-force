@@ -10,6 +10,7 @@ const CHARACTER_TYPES = {
         attack: 100,
         range: 10,
         cooltime: 10,
+        speed: 0.8,
         cost: 500,
         color: "red",
     },
@@ -21,6 +22,7 @@ const CHARACTER_TYPES = {
         attack: 200,
         range: 20,
         cooltime: 20,
+        speed: 1.0,
         cost: 1000,
         color: "green",
     },
@@ -32,6 +34,7 @@ const CHARACTER_TYPES = {
         attack: 100,
         range: 40,
         cooltime: 10,
+        speed: 1.0,
         cost: 1000,
         color: "yellow",
     },
@@ -43,6 +46,7 @@ const CHARACTER_TYPES = {
         attack: 200,
         range: 40,
         cooltime: 25,
+        speed: 1.0,
         cost: 1000,
         color: "blue",
     },
@@ -54,6 +58,7 @@ const CHARACTER_TYPES = {
         attack: 400,
         range: 20,
         cooltime: 10,
+        speed: 1.5,
         cost: 2000,
         color: "lime",
     },
@@ -65,6 +70,7 @@ const CHARACTER_TYPES = {
         attack: 400,
         range: 40,
         cooltime: 10,
+        speed: 1.5,
         cost: 1000,
         color: "aqua",
     },
@@ -162,13 +168,13 @@ function view() {
 
     for (var character of state.teamA.characters.concat(state.teamB.characters)) {
         ctx.fillStyle = CHARACTER_TYPES[character.type].color;
-        ctx.fillRect(5 * character.x, 5 * character.y + 15, 20, 20);
+        ctx.fillRect(5 * character.x, 5 * character.y - 10, 20, 20);
     }
 
     for (var fired of state.fired) {
         ctx.beginPath();
-        ctx.moveTo(5 * fired[0], 5 * fired[1] + 25);
-        ctx.lineTo(5 * fired[2], 5 * fired[3] + 25);
+        ctx.moveTo(5 * fired[0], 5 * fired[1]);
+        ctx.lineTo(5 * fired[2], 5 * fired[3]);
         ctx.strokeStyle = "white";
         ctx.lineWidth = 2;
         ctx.stroke();
@@ -177,7 +183,7 @@ function view() {
 
     for (var bursted of state.bursted) {
         ctx.beginPath();
-        ctx.arc(5 * bursted[0], 5 * bursted[1] + 25, 100, 0 * Math.PI / 180, 360 * Math.PI / 180,);
+        ctx.arc(5 * bursted[0], 5 * bursted[1], 100, 0 * Math.PI / 180, 360 * Math.PI / 180,);
         ctx.fillStyle = "red";
         ctx.fill();
     }
@@ -186,15 +192,10 @@ function view() {
 
 function move() {
     for (var character of state.teamA.characters.concat(state.teamB.characters)) {
-        var speed = 1;
-        if (character.onAir) {
-            speed = 1.5;
-        }
-
         if (character.x < character.destination) {
-            character.x += speed;
+            character.x += character.speed;
         } else if (character.x > character.destination) {
-            character.x -= speed;
+            character.x -= character.speed;
         }
     }
 }
@@ -326,6 +327,7 @@ function generate(team, type, y) {
             attack: CHARACTER_TYPES[type].attack,
             range: CHARACTER_TYPES[type].range,
             cooltime: CHARACTER_TYPES[type].cooltime,
+            speed: CHARACTER_TYPES[type].speed,
             destination: destination,
             fired: -100,
             x: x,
