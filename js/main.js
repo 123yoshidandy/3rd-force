@@ -1,7 +1,8 @@
 const WIDTH = 200;
 const HEIGHT = 100;
+const TACTICS = ["sample", "random"];
 
-const CHARACTER_TYPES = {
+const ARM_TYPES = {
     infantry: {
         type: "infantry",
         onAir: false,
@@ -21,7 +22,7 @@ const CHARACTER_TYPES = {
         life: 400,
         attack: 200,
         range: 20,
-        cooltime: 20,
+        cooltime: 15,
         speed: 1.0,
         cost: 1000,
         color: "green",
@@ -70,7 +71,7 @@ const CHARACTER_TYPES = {
         attack: 400,
         range: 40,
         cooltime: 10,
-        speed: 1.5,
+        speed: 2.0,
         cost: 1000,
         color: "aqua",
     },
@@ -84,14 +85,14 @@ restart();
 
 function init() {
     var selectTeamA = document.getElementById("teamA.select");
-    for (var i of ["sample", "random"]) {
+    for (var i of TACTICS) {
         var optionElement = document.createElement("option");
         optionElement.textContent = i;
         optionElement.value = i;
         selectTeamA.appendChild(optionElement);
     }
     var selectTeamB = document.getElementById("teamB.select");
-    for (var i of ["random", "sample"]) {
+    for (var i of TACTICS) {
         var optionElement = document.createElement("option");
         optionElement.textContent = i;
         optionElement.value = i;
@@ -105,12 +106,12 @@ function restart() {
         teamA: {
             life: 1000,
             money: 1000,
-            characters : [],
+            arms : [],
         },
         teamB: {
             life: 1000,
             money: 1000,
-            characters : [],
+            arms : [],
         },
         fired: [],
         bursted: [],
@@ -166,9 +167,9 @@ function view() {
         }
     }
 
-    for (var character of state.teamA.characters.concat(state.teamB.characters)) {
-        ctx.fillStyle = CHARACTER_TYPES[character.type].color;
-        ctx.fillRect(5 * character.x, 5 * character.y - 10, 20, 20);
+    for (var arm of state.teamA.arms.concat(state.teamB.arms)) {
+        ctx.fillStyle = ARM_TYPES[arm.type].color;
+        ctx.fillRect(5 * arm.x, 5 * arm.y - 10, 20, 20);
     }
 
     for (var fired of state.fired) {
@@ -191,84 +192,84 @@ function view() {
 }
 
 function move() {
-    for (var character of state.teamA.characters.concat(state.teamB.characters)) {
-        if (character.x < character.destination) {
-            character.x += character.speed;
-        } else if (character.x > character.destination) {
-            character.x -= character.speed;
+    for (var arm of state.teamA.arms.concat(state.teamB.arms)) {
+        if (arm.x < arm.destination) {
+            arm.x += arm.speed;
+        } else if (arm.x > arm.destination) {
+            arm.x -= arm.speed;
         }
     }
 }
 
 function attack_enemy() {
-    for (var characterA of state.teamA.characters) {
-        if (state.time > characterA.fired + characterA.cooltime) {
+    for (var armA of state.teamA.arms) {
+        if (state.time > armA.fired + armA.cooltime) {
             var targets = [];
-            for (var characterB of state.teamB.characters) {
-                if (characterA.x <= characterB.x
-                    && characterB.x <= characterA.x + characterA.range
-                    && Math.abs(characterA.y - characterB.y) <= 10
-                    && ((characterA.vsAir && characterB.onAir) || (!characterA.vsAir && !characterB.onAir))
+            for (var armB of state.teamB.arms) {
+                if (armA.x <= armB.x
+                    && armB.x <= armA.x + armA.range
+                    && Math.abs(armA.y - armB.y) <= 10
+                    && ((armA.vsAir && armB.onAir) || (!armA.vsAir && !armB.onAir))
                 ) {
-                    targets.push(characterB);
+                    targets.push(armB);
                 }
             }
             if (targets.length > 0) {
                 var target = Math.floor(Math.random() * targets.length);
-                targets[target].life -= characterA.attack;
-                characterA.fired = state.time;
-                state.fired.push([characterA.x, characterA.y, targets[target].x, targets[target].y]);
+                targets[target].life -= armA.attack;
+                armA.fired = state.time;
+                state.fired.push([armA.x, armA.y, targets[target].x, targets[target].y]);
             }
         }
     }
 
-    for (var characterB of state.teamB.characters) {
-        if (state.time > characterB.fired + characterB.cooltime) {
+    for (var armB of state.teamB.arms) {
+        if (state.time > armB.fired + armB.cooltime) {
             var targets = [];
-            for (var characterA of state.teamA.characters) {
-                if (characterA.x <= characterB.x
-                    && characterB.x - characterB.range <= characterA.x
-                    && Math.abs(characterA.y - characterB.y) <= 10
-                    && ((characterB.vsAir && characterA.onAir) || (!characterB.vsAir && !characterA.onAir))
+            for (var armA of state.teamA.arms) {
+                if (armA.x <= armB.x
+                    && armB.x - armB.range <= armA.x
+                    && Math.abs(armA.y - armB.y) <= 10
+                    && ((armB.vsAir && armA.onAir) || (!armB.vsAir && !armA.onAir))
                 ) {
-                    targets.push(characterA);
+                    targets.push(armA);
                 }
             }
             if (targets.length > 0) {
                 var target = Math.floor(Math.random() * targets.length);
-                targets[target].life -= characterB.attack;
-                characterB.fired = state.time;
-                state.fired.push([characterB.x, characterB.y, targets[target].x, targets[target].y]);
+                targets[target].life -= armB.attack;
+                armB.fired = state.time;
+                state.fired.push([armB.x, armB.y, targets[target].x, targets[target].y]);
             }
         }
     }
 
-    for (var i = state.teamA.characters.length - 1; i >= 0; i--) {
-        if (state.teamA.characters[i].life <= 0) {
-            state.teamA.characters.splice(i, 1);
+    for (var i = state.teamA.arms.length - 1; i >= 0; i--) {
+        if (state.teamA.arms[i].life <= 0) {
+            state.teamA.arms.splice(i, 1);
         }
     }
-    for (var i = state.teamB.characters.length - 1; i >= 0; i--) {
-        if (state.teamB.characters[i].life <= 0) {
-            state.teamB.characters.splice(i, 1);
+    for (var i = state.teamB.arms.length - 1; i >= 0; i--) {
+        if (state.teamB.arms[i].life <= 0) {
+            state.teamB.arms.splice(i, 1);
         }
     }
 }
 
 function attack_area() {
-    for (var i = state.teamA.characters.length - 1; i >= 0; i--) {
-        if (state.teamA.characters[i].type == "infantry" && state.teamA.characters[i].x >= WIDTH - 1) {
-            state.teamB.life -= state.teamA.characters[i].attack;
-            state.bursted.push([state.teamA.characters[i].x, state.teamA.characters[i].y]);
-            state.teamA.characters.splice(i, 1);
+    for (var i = state.teamA.arms.length - 1; i >= 0; i--) {
+        if (state.teamA.arms[i].type == "infantry" && state.teamA.arms[i].x >= WIDTH - 1) {
+            state.teamB.life -= state.teamA.arms[i].attack;
+            state.bursted.push([state.teamA.arms[i].x, state.teamA.arms[i].y]);
+            state.teamA.arms.splice(i, 1);
         }
     }
 
-    for (var i = state.teamB.characters.length - 1; i >= 0; i--) {
-        if (state.teamB.characters[i].type == "infantry" && state.teamB.characters[i].x <= 0) {
-            state.teamA.life -= state.teamB.characters[i].attack;
-            state.bursted.push([state.teamB.characters[i].x, state.teamB.characters[i].y]);
-            state.teamB.characters.splice(i, 1);
+    for (var i = state.teamB.arms.length - 1; i >= 0; i--) {
+        if (state.teamB.arms[i].type == "infantry" && state.teamB.arms[i].x <= 0) {
+            state.teamA.life -= state.teamB.arms[i].attack;
+            state.bursted.push([state.teamB.arms[i].x, state.teamB.arms[i].y]);
+            state.teamB.arms.splice(i, 1);
         }
     }
 }
@@ -280,9 +281,9 @@ async function command() {
     const tactics1 = new module1.Tactics();
     const result1= tactics1.exec(state.time, state.teamA, state.teamB);
 
-    for (var character of state.teamA.characters.concat(state.teamB.characters)) {
-        character.x = WIDTH - 1 - character.x;
-        character.y = HEIGHT - 1 - character.y;
+    for (var arm of state.teamA.arms.concat(state.teamB.arms)) {
+        arm.x = WIDTH - 1 - arm.x;
+        arm.y = HEIGHT - 1 - arm.y;
     }
 
     let element2 = document.getElementById('teamB.select');
@@ -291,9 +292,9 @@ async function command() {
     const tactics2 = new module2.Tactics();
     const result2 = tactics2.exec(state.time, state.teamB, state.teamA);
 
-    for (var character of state.teamA.characters.concat(state.teamB.characters)) {
-        character.x = WIDTH - 1 - character.x;
-        character.y = HEIGHT - 1 - character.y;
+    for (var arm of state.teamA.arms.concat(state.teamB.arms)) {
+        arm.x = WIDTH - 1 - arm.x;
+        arm.y = HEIGHT - 1 - arm.y;
     }
 
     for (var result of result1) {
@@ -306,10 +307,10 @@ async function command() {
 }
 
 function generate(team, type, y) {
-    if (state[team].money >= CHARACTER_TYPES[type].cost) {
+    if (state[team].money >= ARM_TYPES[type].cost) {
 
         var x = 0;
-        var destination = WIDTH - CHARACTER_TYPES[type].range;
+        var destination = WIDTH - ARM_TYPES[type].range;
         if (type == "infantry") {
             destination = WIDTH;
         }
@@ -318,21 +319,21 @@ function generate(team, type, y) {
             destination = WIDTH - destination;
         }
 
-        state[team].characters.push({
+        state[team].arms.push({
             team: team,
             type: type,
-            onAir: CHARACTER_TYPES[type].onAir,
-            vsAir: CHARACTER_TYPES[type].vsAir,
-            life: CHARACTER_TYPES[type].life,
-            attack: CHARACTER_TYPES[type].attack,
-            range: CHARACTER_TYPES[type].range,
-            cooltime: CHARACTER_TYPES[type].cooltime,
-            speed: CHARACTER_TYPES[type].speed,
+            onAir: ARM_TYPES[type].onAir,
+            vsAir: ARM_TYPES[type].vsAir,
+            life: ARM_TYPES[type].life,
+            attack: ARM_TYPES[type].attack,
+            range: ARM_TYPES[type].range,
+            cooltime: ARM_TYPES[type].cooltime,
+            speed: ARM_TYPES[type].speed,
             destination: destination,
             fired: -100,
             x: x,
             y: y,
         });
-        state[team].money -= CHARACTER_TYPES[type].cost;
+        state[team].money -= ARM_TYPES[type].cost;
     }
 }

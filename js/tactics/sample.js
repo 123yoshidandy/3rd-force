@@ -6,9 +6,9 @@ export class Tactics {
             return result;
         }
 
-        for (var e of enemy.characters) {
+        for (var e of enemy.arms) {
             var safe = false;
-            for (var f of friend.characters) {
+            for (var f of friend.arms) {
                 if (e.onAir && f.type == "missile" && f.x < e.x && Math.abs(e.y - f.y) <= 10) {
                     safe = true;
                 }
