@@ -2,23 +2,30 @@ export class Tactics {
     exec(time, friend, enemy) {
         var result = [];
 
-        if (friend.money < 1000) {
+        if (friend.money < 2000) {
             return result;
         }
 
         for (var e of enemy.characters) {
             var safe = false;
             for (var f of friend.characters) {
-                if (f.type == "g" && f.x < e.x && Math.abs(e.y - f.y) <= 10) {
+                if (e.onAir && f.type == "missile" && f.x < e.x && Math.abs(e.y - f.y) <= 10) {
+                    safe = true;
+                }
+                if (!e.onAir && f.type == "tank" && f.x < e.x && Math.abs(e.y - f.y) <= 10) {
                     safe = true;
                 }
             }
             if (!safe) {
-                result.push([e.y, "g"]);
+                if (e.onAir) {
+                    result.push([e.y, "missile"]);
+                } else {
+                    result.push([e.y, "tank"]);
+                }
             }
         }
 
-        result.push([Math.floor(Math.random() * 100), "r"]);
+        result.push([Math.floor(Math.random() * 100), "infantry"]);
 
         return result;
     }

@@ -2,35 +2,71 @@ const WIDTH = 200;
 const HEIGHT = 100;
 
 const CHARACTER_TYPES = {
-    r: {
-        type: "r",
+    infantry: {
+        type: "infantry",
+        onAir: false,
+        vsAir: false,
         life: 100,
         attack: 100,
         range: 10,
         cooltime: 10,
         cost: 500,
-        destination: WIDTH,
         color: "red",
     },
-    g: {
-        type: "g",
+    tank: {
+        type: "tank",
+        onAir: false,
+        vsAir: false,
         life: 400,
         attack: 200,
         range: 20,
         cooltime: 20,
         cost: 1000,
-        destination: WIDTH - 20,
         color: "green",
     },
-    y: {
-        type: "y",
+    rocket: {
+        type: "rocket",
+        onAir: false,
+        vsAir: false,
         life: 200,
         attack: 100,
         range: 40,
         cooltime: 10,
         cost: 1000,
-        destination: WIDTH - 40,
         color: "yellow",
+    },
+    missile: {
+        type: "missile",
+        onAir: false,
+        vsAir: true,
+        life: 200,
+        attack: 200,
+        range: 40,
+        cooltime: 25,
+        cost: 1000,
+        color: "blue",
+    },
+    attacker: {
+        type: "attacker",
+        onAir: true,
+        vsAir: false,
+        life: 200,
+        attack: 400,
+        range: 20,
+        cooltime: 10,
+        cost: 2000,
+        color: "lime",
+    },
+    fighter: {
+        type: "fighter",
+        onAir: true,
+        vsAir: true,
+        life: 400,
+        attack: 400,
+        range: 40,
+        cooltime: 10,
+        cost: 1000,
+        color: "aqua",
     },
 };
 
@@ -150,10 +186,15 @@ function view() {
 
 function move() {
     for (var character of state.teamA.characters.concat(state.teamB.characters)) {
+        var speed = 1;
+        if (character.onAir) {
+            speed = 1.5;
+        }
+
         if (character.x < character.destination) {
-            character.x++;
+            character.x += speed;
         } else if (character.x > character.destination) {
-            character.x--;
+            character.x -= speed;
         }
     }
 }
@@ -166,6 +207,7 @@ function attack_enemy() {
                 if (characterA.x <= characterB.x
                     && characterB.x <= characterA.x + characterA.range
                     && Math.abs(characterA.y - characterB.y) <= 10
+                    && ((characterA.vsAir && characterB.onAir) || (!characterA.vsAir && !characterB.onAir))
                 ) {
                     targets.push(characterB);
                 }
@@ -186,6 +228,7 @@ function attack_enemy() {
                 if (characterA.x <= characterB.x
                     && characterB.x - characterB.range <= characterA.x
                     && Math.abs(characterA.y - characterB.y) <= 10
+                    && ((characterB.vsAir && characterA.onAir) || (!characterB.vsAir && !characterA.onAir))
                 ) {
                     targets.push(characterA);
                 }
@@ -213,7 +256,7 @@ function attack_enemy() {
 
 function attack_area() {
     for (var i = state.teamA.characters.length - 1; i >= 0; i--) {
-        if (state.teamA.characters[i].type == "r" && state.teamA.characters[i].x >= WIDTH - 1) {
+        if (state.teamA.characters[i].type == "infantry" && state.teamA.characters[i].x >= WIDTH - 1) {
             state.teamB.life -= state.teamA.characters[i].attack;
             state.bursted.push([state.teamA.characters[i].x, state.teamA.characters[i].y]);
             state.teamA.characters.splice(i, 1);
@@ -221,7 +264,7 @@ function attack_area() {
     }
 
     for (var i = state.teamB.characters.length - 1; i >= 0; i--) {
-        if (state.teamB.characters[i].type == "r" && state.teamB.characters[i].x <= 0) {
+        if (state.teamB.characters[i].type == "infantry" && state.teamB.characters[i].x <= 0) {
             state.teamA.life -= state.teamB.characters[i].attack;
             state.bursted.push([state.teamB.characters[i].x, state.teamB.characters[i].y]);
             state.teamB.characters.splice(i, 1);
@@ -265,7 +308,10 @@ function generate(team, type, y) {
     if (state[team].money >= CHARACTER_TYPES[type].cost) {
 
         var x = 0;
-        var destination = CHARACTER_TYPES[type].destination;
+        var destination = WIDTH - CHARACTER_TYPES[type].range;
+        if (type == "infantry") {
+            destination = WIDTH;
+        }
         if (team == "teamB") {
             x = WIDTH;
             destination = WIDTH - destination;
@@ -274,11 +320,13 @@ function generate(team, type, y) {
         state[team].characters.push({
             team: team,
             type: type,
+            onAir: CHARACTER_TYPES[type].onAir,
+            vsAir: CHARACTER_TYPES[type].vsAir,
             life: CHARACTER_TYPES[type].life,
             attack: CHARACTER_TYPES[type].attack,
             range: CHARACTER_TYPES[type].range,
-            destination: destination,
             cooltime: CHARACTER_TYPES[type].cooltime,
+            destination: destination,
             fired: -100,
             x: x,
             y: y,

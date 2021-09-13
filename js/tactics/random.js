@@ -1,9 +1,9 @@
 export class Tactics {
     exec(time, friend, enemy) {
         var height = 100;
-        var types = ["r", "g", "y"];
+        var types = ["infantry", "tank", "rocket", "missile", "attacker", "fighter"];
 
-        if (friend.money < 1000) {
+        if (friend.money < 2000) {
             return [];
         }
 
