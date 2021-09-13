@@ -1,6 +1,6 @@
 const WIDTH = 200;
 const HEIGHT = 100;
-const TACTICS = ["sample", "random"];
+const TACTICS = ["sample", "random", "kazuki.main"];
 
 const ARM_TYPES = {
     infantry: {
