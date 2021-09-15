@@ -86,6 +86,7 @@ const ARM_TYPES = {
 var state = {};
 var timer = null;
 var scene = null
+var images = {};
 
 window.addEventListener('load', init);
 
@@ -103,6 +104,12 @@ function init() {
         optionElement.textContent = i;
         optionElement.value = i;
         selectTeamB.appendChild(optionElement);
+    }
+    for (var arm in ARM_TYPES){
+        images[arm + "A"] = new Image();
+        images[arm + "A"].src = "../img/" + arm + "A.png";
+        images[arm + "B"] = new Image();
+        images[arm + "B"].src = "../img/" + arm + "B.png";
     }
     init_three();
     restart();
@@ -177,9 +184,12 @@ function view() {
         }
     }
 
-    for (var arm of state.teamA.arms.concat(state.teamB.arms)) {
-        ctx.fillStyle = ARM_TYPES[arm.type].color;
-        ctx.fillRect(arm.x * ASPECT_RATIO, arm.y * ASPECT_RATIO - 10, ARM_SIZE, ARM_SIZE);
+    for (var arm of state.teamA.arms) {
+        ctx.drawImage(images[arm.type + "A"], arm.x * ASPECT_RATIO, arm.y * ASPECT_RATIO - 10, ARM_SIZE * 1.5, ARM_SIZE * 1.5);
+    }
+
+    for (var arm of state.teamB.arms) {
+        ctx.drawImage(images[arm.type + "B"], arm.x * ASPECT_RATIO, arm.y * ASPECT_RATIO - 10, ARM_SIZE * 1.5, ARM_SIZE * 1.5);
     }
 
     for (var fired of state.fired) {
