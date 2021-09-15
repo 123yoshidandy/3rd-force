@@ -217,12 +217,22 @@ function move() {
             arm.stoped = false;
 
         } else if (arm.x < arm.destination) {
-            arm.x += arm.speed;
-            arm.mesh.position.x += arm.speed * ASPECT_RATIO;
+            if (arm.friend == state.teamA) {
+                arm.x += arm.speed;
+                arm.mesh.position.x += arm.speed * ASPECT_RATIO;
+            } else {
+                arm.x += 0.5 * arm.speed;
+                arm.mesh.position.x += 0.5 * arm.speed * ASPECT_RATIO;
+            }
 
         } else if (arm.x > arm.destination) {
-            arm.x -= arm.speed;
-            arm.mesh.position.x -= arm.speed * ASPECT_RATIO;
+            if (arm.friend == state.teamA) {
+                arm.x -= 0.5 * arm.speed;
+                arm.mesh.position.x -= 0.5 * arm.speed * ASPECT_RATIO;
+            } else {
+                arm.x -= arm.speed;
+                arm.mesh.position.x -= arm.speed * ASPECT_RATIO;
+            }
         }
     }
 }
