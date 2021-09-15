@@ -1,5 +1,6 @@
 const WIDTH = 200;
 const HEIGHT = 100;
+const ASPECT_RATIO = 5;
 const TACTICS = ["sample", "random", "kazuki.main"];
 
 const ARM_TYPES = {
@@ -79,9 +80,9 @@ const ARM_TYPES = {
 
 var state = {};
 var timer = null;
+var scene = null
 
-init();
-restart();
+window.addEventListener('load', init);
 
 function init() {
     var selectTeamA = document.getElementById("teamA.select");
@@ -98,6 +99,8 @@ function init() {
         optionElement.value = i;
         selectTeamB.appendChild(optionElement);
     }
+    init_three();
+    restart();
 }
 
 function restart() {
@@ -195,8 +198,10 @@ function move() {
     for (var arm of state.teamA.arms.concat(state.teamB.arms)) {
         if (arm.x < arm.destination) {
             arm.x += arm.speed;
+            arm.mesh.position.x += arm.speed * ASPECT_RATIO;
         } else if (arm.x > arm.destination) {
             arm.x -= arm.speed;
+            arm.mesh.position.x -= arm.speed * ASPECT_RATIO;
         }
     }
 }
@@ -246,11 +251,13 @@ function attack_enemy() {
 
     for (var i = state.teamA.arms.length - 1; i >= 0; i--) {
         if (state.teamA.arms[i].life <= 0) {
+            scene.remove(state.teamA.arms[i].mesh);
             state.teamA.arms.splice(i, 1);
         }
     }
     for (var i = state.teamB.arms.length - 1; i >= 0; i--) {
         if (state.teamB.arms[i].life <= 0) {
+            scene.remove(state.teamB.arms[i].mesh);
             state.teamB.arms.splice(i, 1);
         }
     }
@@ -261,6 +268,7 @@ function attack_area() {
         if (state.teamA.arms[i].type == "infantry" && state.teamA.arms[i].x >= WIDTH - 1) {
             state.teamB.life -= state.teamA.arms[i].attack;
             state.bursted.push([state.teamA.arms[i].x, state.teamA.arms[i].y]);
+            scene.remove(state.teamA.arms[i].mesh);
             state.teamA.arms.splice(i, 1);
         }
     }
@@ -269,6 +277,7 @@ function attack_area() {
         if (state.teamB.arms[i].type == "infantry" && state.teamB.arms[i].x <= 0) {
             state.teamA.life -= state.teamB.arms[i].attack;
             state.bursted.push([state.teamB.arms[i].x, state.teamB.arms[i].y]);
+            scene.remove(state.teamB.arms[i].mesh);
             state.teamB.arms.splice(i, 1);
         }
     }
@@ -319,6 +328,14 @@ function generate(team, type, y) {
             destination = WIDTH - destination;
         }
 
+        var geometry = new THREE.BoxGeometry(20, 20, 20);
+        var material = new THREE.MeshPhongMaterial({color: ARM_TYPES[type].color});
+        var box = new THREE.Mesh(geometry, material);
+        box.position.x = x * ASPECT_RATIO;
+        box.position.y = HEIGHT * ASPECT_RATIO - y * ASPECT_RATIO;
+        box.position.z = 10;
+        scene.add(box);
+
         state[team].arms.push({
             team: team,
             type: type,
@@ -333,7 +350,53 @@ function generate(team, type, y) {
             fired: -100,
             x: x,
             y: y,
+            mesh: box,
         });
         state[team].money -= ARM_TYPES[type].cost;
+    }
+}
+
+
+function init_three() {
+    const renderer = new THREE.WebGLRenderer({
+        canvas: document.querySelector('#three_Canvas')
+    });
+    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.setSize(WIDTH * ASPECT_RATIO, HEIGHT * ASPECT_RATIO);
+
+    scene = new THREE.Scene();
+
+    scene.add(new THREE.AmbientLight(0xFFFFFF, 1.0));
+    var directionalLight = new THREE.DirectionalLight(0xFFFFFF, 1.0);
+    directionalLight.position.set(WIDTH * ASPECT_RATIO, HEIGHT * ASPECT_RATIO, 100);
+    scene.add(directionalLight);
+
+    const camera = new THREE.PerspectiveCamera(60, (WIDTH * ASPECT_RATIO) / (HEIGHT * ASPECT_RATIO), 1, 10000);
+
+    const controls = new THREE.OrbitControls(camera, document.querySelector('#three_Canvas'));
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.2;
+
+    camera.position.set(-50, -50, 250);
+    camera.lookAt(new THREE.Vector3(WIDTH * ASPECT_RATIO, HEIGHT * ASPECT_RATIO, 0));
+    camera.rotation.x =  0.70;
+    camera.rotation.y = -0.70;
+    camera.rotation.z = -0.10;
+    // TODO: controlへの適用
+
+    var axes = new THREE.AxisHelper(25);
+    scene.add(axes);
+
+    var geometry = new THREE.BoxGeometry(WIDTH * ASPECT_RATIO, HEIGHT * ASPECT_RATIO, 1);
+    var material = new THREE.MeshPhongMaterial({color: 0x555555});
+    var box = new THREE.Mesh(geometry, material);
+    box.position.x = WIDTH * ASPECT_RATIO / 2;
+    box.position.y = HEIGHT * ASPECT_RATIO / 2;
+    scene.add(box);
+
+    tick();
+    function tick() {
+        renderer.render(scene, camera);
+        requestAnimationFrame(tick);
     }
 }
