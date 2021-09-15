@@ -1,6 +1,11 @@
 const WIDTH = 200;
 const HEIGHT = 100;
+
 const ASPECT_RATIO = 5;
+const ARM_SIZE = 20;
+
+const FIRE_RANGE = 10;
+
 const TACTICS = ["sample", "random", "kazuki.main"];
 
 const ARM_TYPES = {
@@ -119,7 +124,9 @@ function restart() {
         fired: [],
         bursted: [],
         winner: null,
-    }
+    };
+    state.teamA.enemy = state.teamB;
+    state.teamB.enemy = state.teamA;
 
     if (timer != null) {
         clearInterval(timer);
@@ -172,13 +179,13 @@ function view() {
 
     for (var arm of state.teamA.arms.concat(state.teamB.arms)) {
         ctx.fillStyle = ARM_TYPES[arm.type].color;
-        ctx.fillRect(5 * arm.x, 5 * arm.y - 10, 20, 20);
+        ctx.fillRect(arm.x * ASPECT_RATIO, arm.y * ASPECT_RATIO - 10, ARM_SIZE, ARM_SIZE);
     }
 
     for (var fired of state.fired) {
         ctx.beginPath();
-        ctx.moveTo(5 * fired[0], 5 * fired[1]);
-        ctx.lineTo(5 * fired[2], 5 * fired[3]);
+        ctx.moveTo(fired[0] * ASPECT_RATIO, fired[1] * ASPECT_RATIO);
+        ctx.lineTo(fired[2] * ASPECT_RATIO, fired[3] * ASPECT_RATIO);
         ctx.strokeStyle = "white";
         ctx.lineWidth = 2;
         ctx.stroke();
@@ -187,7 +194,7 @@ function view() {
 
     for (var bursted of state.bursted) {
         ctx.beginPath();
-        ctx.arc(5 * bursted[0], 5 * bursted[1], 100, 0 * Math.PI / 180, 360 * Math.PI / 180,);
+        ctx.arc(bursted[0] * ASPECT_RATIO, bursted[1] * ASPECT_RATIO, 100, 0 * Math.PI / 180, 360 * Math.PI / 180,);
         ctx.fillStyle = "red";
         ctx.fill();
     }
@@ -196,9 +203,23 @@ function view() {
 
 function move() {
     for (var arm of state.teamA.arms.concat(state.teamB.arms)) {
-        if (arm.x < arm.destination) {
+        arm.stoped = true;
+        var conflict = false;
+        for (var friend of arm.friend.arms) {
+            if (arm != friend && Math.abs(arm.x - friend.x) <= ASPECT_RATIO && Math.abs(arm.y - friend.y) <= ASPECT_RATIO && friend.stoped) {
+                conflict = true;
+            }
+        }
+
+        if (conflict) {
+            arm.y -= arm.speed;
+            arm.mesh.position.y -= arm.speed * ASPECT_RATIO;
+            arm.stoped = false;
+
+        } else if (arm.x < arm.destination) {
             arm.x += arm.speed;
             arm.mesh.position.x += arm.speed * ASPECT_RATIO;
+
         } else if (arm.x > arm.destination) {
             arm.x -= arm.speed;
             arm.mesh.position.x -= arm.speed * ASPECT_RATIO;
@@ -213,7 +234,7 @@ function attack_enemy() {
             for (var armB of state.teamB.arms) {
                 if (armA.x <= armB.x
                     && armB.x <= armA.x + armA.range
-                    && Math.abs(armA.y - armB.y) <= 10
+                    && Math.abs(armA.y - armB.y) <= FIRE_RANGE
                     && ((armA.vsAir && armB.onAir) || (!armA.vsAir && !armB.onAir))
                 ) {
                     targets.push(armB);
@@ -234,7 +255,7 @@ function attack_enemy() {
             for (var armA of state.teamA.arms) {
                 if (armA.x <= armB.x
                     && armB.x - armB.range <= armA.x
-                    && Math.abs(armA.y - armB.y) <= 10
+                    && Math.abs(armA.y - armB.y) <= FIRE_RANGE
                     && ((armB.vsAir && armA.onAir) || (!armB.vsAir && !armA.onAir))
                 ) {
                     targets.push(armA);
@@ -307,37 +328,44 @@ async function command() {
     }
 
     for (var result of result1) {
-        generate("teamA", result[1], result[0]);
+        generate(state.teamA, result[1], result[0]);
     }
 
     for (var result of result2) {
-        generate("teamB", result[1], HEIGHT - 1 - result[0]);
+        generate(state.teamB, result[1], HEIGHT - 1 - result[0]);
     }
 }
 
-function generate(team, type, y) {
-    if (state[team].money >= ARM_TYPES[type].cost) {
+function generate(friend, type, y) {
+    if (friend.money >= ARM_TYPES[type].cost) {
 
         var x = 0;
         var destination = WIDTH - ARM_TYPES[type].range;
         if (type == "infantry") {
             destination = WIDTH;
         }
-        if (team == "teamB") {
+        if (friend == state.teamB) {
             x = WIDTH;
             destination = WIDTH - destination;
         }
 
-        var geometry = new THREE.BoxGeometry(20, 20, 20);
+        for (var arm of friend.arms) {
+            if (Math.abs(arm.x - x) <= ASPECT_RATIO && Math.abs(arm.y - y) <= ASPECT_RATIO) {
+                return;
+            }
+        }
+
+        var geometry = new THREE.BoxGeometry(ARM_SIZE, ARM_SIZE, ARM_SIZE);
         var material = new THREE.MeshPhongMaterial({color: ARM_TYPES[type].color});
         var box = new THREE.Mesh(geometry, material);
         box.position.x = x * ASPECT_RATIO;
         box.position.y = HEIGHT * ASPECT_RATIO - y * ASPECT_RATIO;
-        box.position.z = 10;
+        box.position.z = ARM_SIZE / 2;
         scene.add(box);
 
-        state[team].arms.push({
-            team: team,
+        friend.arms.push({
+            friend: friend,
+            enemy: friend.enemy,
             type: type,
             onAir: ARM_TYPES[type].onAir,
             vsAir: ARM_TYPES[type].vsAir,
@@ -350,9 +378,10 @@ function generate(team, type, y) {
             fired: -100,
             x: x,
             y: y,
+            stoped: false,
             mesh: box,
         });
-        state[team].money -= ARM_TYPES[type].cost;
+        friend.money -= ARM_TYPES[type].cost;
     }
 }
 
