@@ -78,8 +78,20 @@ const ARM_TYPES = {
         range: 40,
         cooltime: 10,
         speed: 2.0,
-        cost: 1000,
+        cost: 2000,
         color: "aqua",
+    },
+    bomber: {
+        type: "bomber",
+        onAir: true,
+        vsAir: true,
+        life: 200,
+        attack: 100,
+        range: 0,
+        cooltime: 10,
+        speed: 2.0,
+        cost: 2000,
+        color: "red",
     },
 };
 
@@ -306,7 +318,7 @@ function attack_enemy() {
 
 function attack_area() {
     for (var i = state.teamA.arms.length - 1; i >= 0; i--) {
-        if (state.teamA.arms[i].type == "infantry" && state.teamA.arms[i].x >= WIDTH - 1) {
+        if (["infantry", "bomber"].includes(state.teamA.arms[i].type) && state.teamA.arms[i].x >= WIDTH - 1) {
             state.teamB.life -= state.teamA.arms[i].attack;
             state.bursted.push([state.teamA.arms[i].x, state.teamA.arms[i].y]);
             scene.remove(state.teamA.arms[i].mesh);
@@ -315,7 +327,7 @@ function attack_area() {
     }
 
     for (var i = state.teamB.arms.length - 1; i >= 0; i--) {
-        if (state.teamB.arms[i].type == "infantry" && state.teamB.arms[i].x <= 0) {
+        if (["infantry", "bomber"].includes(state.teamB.arms[i].type) && state.teamB.arms[i].x <= 0) {
             state.teamA.life -= state.teamB.arms[i].attack;
             state.bursted.push([state.teamB.arms[i].x, state.teamB.arms[i].y]);
             scene.remove(state.teamB.arms[i].mesh);
@@ -361,7 +373,7 @@ function generate(friend, type, y) {
 
         var x = 0;
         var destination = WIDTH - ARM_TYPES[type].range;
-        if (type == "infantry") {
+        if (["infantry", "bomber"].includes(type)) {
             destination = WIDTH;
         }
         if (friend == state.teamB) {
