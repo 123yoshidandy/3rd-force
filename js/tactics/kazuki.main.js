@@ -2,7 +2,7 @@ export class Tactics {
     exec(time, friend, enemy) {
         var result = [];
 
-        if (friend.money < 2000) {  // 金がある程度貯まるまで待機
+        if (friend.money < 2000) {  // 金が貯まるまで待機
             return result;
         }
 
@@ -33,6 +33,16 @@ export class Tactics {
                 }
             }
         }
+
+        if (friend.money> 5000) {
+            result.push([0,  "infantry", {}]);
+            result.push([10, "tank",     {}]);
+            result.push([20, "tank",     {}]);
+            result.push([70, "tank",     {}]);
+            result.push([80, "tank",     {}]);
+            result.push([90, "infantry", {}]);
+        }
+
         return result;
     }
 }
