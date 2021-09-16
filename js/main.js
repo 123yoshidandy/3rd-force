@@ -280,6 +280,25 @@ function view() {
 }
 
 function move() {
+    for (var i = state.teamA.arms.length - 1; i >= 0; i--) {
+        if (state.teamA.arms[i].return) {
+            if (IS_THREE_VIEW) {
+                scene.remove(state.teamA.arms[i].mesh);
+            }
+            state.teamA.money += state.teamA.arms[i].cost;
+            state.teamA.arms.splice(i, 1);
+        }
+    }
+    for (var i = state.teamB.arms.length - 1; i >= 0; i--) {
+        if (state.teamB.arms[i].return) {
+            if (IS_THREE_VIEW) {
+                scene.remove(state.teamB.arms[i].mesh);
+            }
+            state.teamB.money += state.teamB.arms[i].cost;
+            state.teamB.arms.splice(i, 1);
+        }
+    }
+
     for (var arm of state.teamA.arms.concat(state.teamB.arms)) {
         arm.stoped = true;
         var conflict = false;
@@ -414,6 +433,7 @@ async function command() {
     for (var arm of state.teamA.arms.concat(state.teamB.arms)) {
         arm.x = WIDTH - 1 - arm.x;
         arm.y = HEIGHT - 1 - arm.y;
+        arm.destination = WIDTH - 1 - arm.destination;
     }
 
     let element2 = document.getElementById('teamB.select');
@@ -425,6 +445,7 @@ async function command() {
     for (var arm of state.teamA.arms.concat(state.teamB.arms)) {
         arm.x = WIDTH - 1 - arm.x;
         arm.y = HEIGHT - 1 - arm.y;
+        arm.destination = WIDTH - 1 - arm.destination;
     }
 
     for (var result of result1) {
@@ -487,11 +508,13 @@ function generate(friend, type, y, opt) {
             range: range,
             cooltime: cooltime,
             speed: speed,
+            cost: cost,
             destination: destination,
             fired: -100,
             x: x,
             y: y,
             stoped: false,
+            return: false,
             mesh: box,
         });
         friend.money -= cost;

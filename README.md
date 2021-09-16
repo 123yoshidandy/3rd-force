@@ -45,7 +45,7 @@ https://yoshida-kazuki.github.io/game-3rd-force/
 
 * 機能（マメッコ実装済）
     * 機関砲の導入
-    * 残弾、退却制御の導入
+    * 残弾の導入
     * 兵器カスタマイズの本導入
     * 武器weaponの導入
 * 機能（オリジナル）

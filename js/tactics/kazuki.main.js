@@ -1,5 +1,8 @@
 export class Tactics {
     exec(time, friend, enemy) {
+        setDestination();
+        setReturn();
+
         var result = [];
 
         if (friend.money < 2000) {  // 金が貯まるまで待機
@@ -25,24 +28,100 @@ export class Tactics {
                 if (e.onAir) {
                     result.push([e.y, "missile", {}]);
                 } else {
-                    if (Math.random() < 0.3) {
-                        result.push([e.y, "attacker", {}]);
-                    } else {
+                    var vsAir = false;  // 対空の兵器が存在するか
+                    for (var e2 of enemy.arms) {
+                        if (Math.abs(e.y - e2.y) <= 10 && ["fighter", "missile"].includes(e2.type)) {
+                            vsAir = true;
+                        }
+                    }
+                    if (vsAir) {
                         result.push([e.y, "tank", {}]);
+                    } else {
+                        result.push([e.y, "attacker", {}]);
                     }
                 }
             }
         }
 
-        if (friend.money> 5000) {
-            result.push([0,  "infantry", {}]);
-            result.push([10, "tank",     {}]);
-            result.push([20, "tank",     {}]);
-            result.push([70, "tank",     {}]);
-            result.push([80, "tank",     {}]);
-            result.push([90, "infantry", {}]);
+        if (friend.money> 10000) {
+            if (Math.random() < 0.6) {
+                result.push([  0,   "tank", {}]);
+                result.push([  7, "rocket", {}]);
+                result.push([ 14,   "tank", {}]);
+                result.push([ 21, "rocket", {}]);
+
+                result.push([ 79, "rocket", {}]);
+                result.push([ 86,   "tank", {}]);
+                result.push([ 93, "rocket", {}]);
+                result.push([100,   "tank", {}]);
+            } else if (Math.random() < 0.5) {
+                result.push([  0, "missile", {}]);
+                result.push([  7, "missile", {}]);
+                result.push([ 93, "missile", {}]);
+                result.push([100, "missile", {}]);
+            } else {
+                result.push([  0, "infantry", {}]);
+                result.push([  7, "infantry", {}]);
+                result.push([ 93, "infantry", {}]);
+                result.push([100, "infantry", {}]);
+            }
         }
 
         return result;
+
+        function setDestination() {
+            for (var self of friend.arms) {
+
+                if (["infantry", "bomber"].includes(self.type)) {  // 基本となる目的地設定
+                    self.destination = WIDTH;
+                } else {
+                    self.destination = WIDTH - self.range;
+                }
+
+                for (var e of enemy.arms) {
+                    if (self.x < e.x && Math.abs(e.y - self.y) <= 10) {  // 前方かつ縦範囲内
+
+                        if (self.type == "tank" && ["attacker"].includes(e.type)) {
+                            self.destination = e.x - 60;
+                        }
+
+                        else if (self.type == "rocket" && !e.onAir) {
+                            self.destination = e.x - 60;
+                        }
+
+                        else if (self.type == "attacker" && ["missile", "fighter"].includes(e.type)) {
+                            self.destination = e.x - 60;
+                        }
+                    }
+                }
+            }
+        }
+
+        function setReturn() {
+            for (var self of friend.arms) {
+
+                if (["missile", "fighter"].includes(self.type)) {
+                    self.return = true;
+                    for (var e of enemy.arms) {
+                        if (self.x < e.x && Math.abs(e.y - self.y) <= 10) {  // 前方かつ縦範囲内
+                            if (["attacker", "fighter", "bomber"].includes(e.type)) {
+                                self.return = false;
+                            }
+                        }
+                    }
+                }
+
+                if (["attacker"].includes(self.type)) {
+                    self.return = true;
+                    for (var e of enemy.arms) {
+                        if (self.x < e.x && Math.abs(e.y - self.y) <= 10) {  // 前方かつ縦範囲内
+                            if (["tank", "rocket, infantry"].includes(e.type)) {
+                                self.return = false;
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }
