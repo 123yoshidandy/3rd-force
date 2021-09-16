@@ -17,6 +17,7 @@ const ARM_TYPES = {
         attack: 100,
         range: 10,
         cooltime: 10,
+        bullets: 4,
         speed: 0.8,
         cost: 500,
         color: "red",
@@ -29,6 +30,7 @@ const ARM_TYPES = {
         attack: 200,
         range: 20,
         cooltime: 15,
+        bullets: 4,
         speed: 1.0,
         cost: 1000,
         color: "green",
@@ -41,6 +43,7 @@ const ARM_TYPES = {
         attack: 100,
         range: 40,
         cooltime: 10,
+        bullets: 8,
         speed: 1.0,
         cost: 1000,
         color: "yellow",
@@ -53,6 +56,7 @@ const ARM_TYPES = {
         attack: 200,
         range: 40,
         cooltime: 25,
+        bullets: 4,
         speed: 1.0,
         cost: 1000,
         color: "blue",
@@ -65,6 +69,7 @@ const ARM_TYPES = {
         attack: 400,
         range: 20,
         cooltime: 10,
+        bullets: 4,
         speed: 1.5,
         cost: 2000,
         color: "lime",
@@ -77,6 +82,7 @@ const ARM_TYPES = {
         attack: 400,
         range: 40,
         cooltime: 10,
+        bullets: 4,
         speed: 2.0,
         cost: 2000,
         color: "aqua",
@@ -89,6 +95,7 @@ const ARM_TYPES = {
         attack: 100,
         range: 0,
         cooltime: 10,
+        bullets: 4,
         speed: 2.0,
         cost: 2000,
         color: "red",
@@ -340,7 +347,7 @@ function move() {
 
 function attack_enemy() {
     for (var armA of state.teamA.arms) {
-        if (state.time > armA.fired + armA.cooltime) {
+        if (armA.bullets > 0 && state.time > armA.fired + armA.cooltime) {
             var targets = [];
             for (var armB of state.teamB.arms) {
                 if (armA.x <= armB.x
@@ -354,6 +361,7 @@ function attack_enemy() {
             if (targets.length > 0) {
                 var target = Math.floor(Math.random() * targets.length);
                 targets[target].life -= armA.attack;
+                armA.bullets--;
                 armA.fired = state.time;
                 state.fired.push([armA.x, armA.y, targets[target].x, targets[target].y]);
             }
@@ -361,7 +369,7 @@ function attack_enemy() {
     }
 
     for (var armB of state.teamB.arms) {
-        if (state.time > armB.fired + armB.cooltime) {
+        if (armB.bullets > 0 && state.time > armB.fired + armB.cooltime) {
             var targets = [];
             for (var armA of state.teamA.arms) {
                 if (armA.x <= armB.x
@@ -375,6 +383,7 @@ function attack_enemy() {
             if (targets.length > 0) {
                 var target = Math.floor(Math.random() * targets.length);
                 targets[target].life -= armB.attack;
+                armB.bullets--;
                 armB.fired = state.time;
                 state.fired.push([armB.x, armB.y, targets[target].x, targets[target].y]);
             }
@@ -462,12 +471,14 @@ function generate(friend, type, y, opt) {
     var attack = ARM_TYPES[type].attack * getOpt(opt, "attack");
     var range = ARM_TYPES[type].range * getOpt(opt, "range");
     var cooltime = ARM_TYPES[type].cooltime * getOpt(opt, "cooltime");
+    var bullets = ARM_TYPES[type].bullets * getOpt(opt, "bullets");
     var speed = ARM_TYPES[type].speed * getOpt(opt, "speed");
     var cost = ARM_TYPES[type].cost
                     * getOpt(opt, "life")
                     * getOpt(opt, "attack")
                     * getOpt(opt, "range")
                     * (1 / getOpt(opt, "cooltime"))
+                    * getOpt(opt, "bullets")
                     * getOpt(opt, "speed");
 
     if (friend.money >= cost) {
@@ -507,6 +518,7 @@ function generate(friend, type, y, opt) {
             attack: attack,
             range: range,
             cooltime: cooltime,
+            bullets: bullets,
             speed: speed,
             cost: cost,
             destination: destination,

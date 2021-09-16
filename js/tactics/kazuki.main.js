@@ -100,7 +100,11 @@ export class Tactics {
         function setReturn() {
             for (var self of friend.arms) {
 
-                if (["missile", "fighter"].includes(self.type)) {
+                if (self.bullets <= 0) {
+                    self.return = true;
+                }
+
+                else if (["missile", "fighter"].includes(self.type)) {
                     self.return = true;
                     for (var e of enemy.arms) {
                         if (self.x < e.x && Math.abs(e.y - self.y) <= 10) {  // 前方かつ縦範囲内
@@ -111,7 +115,7 @@ export class Tactics {
                     }
                 }
 
-                if (["attacker"].includes(self.type)) {
+                else if (["attacker"].includes(self.type)) {
                     self.return = true;
                     for (var e of enemy.arms) {
                         if (self.x < e.x && Math.abs(e.y - self.y) <= 10) {  // 前方かつ縦範囲内
