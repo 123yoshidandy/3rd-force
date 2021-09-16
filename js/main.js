@@ -100,9 +100,23 @@ var timer = null;
 var scene = null
 var images = {};
 
+var IS_VIEW = true;
+var IS_THREE_VIEW = false;
+var IS_RANKING = true;
+var interval = 20;
+
+var winners = [];
+var rankingA = 0;
+var rankingB = 0;
+
 window.addEventListener('load', init);
 
 function init() {
+
+    IS_VIEW = document.getElementById('view.select').value == "on";
+    IS_THREE_VIEW = document.getElementById('three.select').value == "on";
+    IS_RANKING = document.getElementById('ranking.select').value == "ranking";
+
     var selectTeamA = document.getElementById("teamA.select");
     for (var i of TACTICS) {
         var optionElement = document.createElement("option");
@@ -117,13 +131,17 @@ function init() {
         optionElement.value = i;
         selectTeamB.appendChild(optionElement);
     }
-    for (var arm in ARM_TYPES){
-        images[arm + "A"] = new Image();
-        images[arm + "A"].src = "../img/" + arm + "A.png";
-        images[arm + "B"] = new Image();
-        images[arm + "B"].src = "../img/" + arm + "B.png";
+    if (IS_VIEW) {
+        for (var arm in ARM_TYPES){
+            images[arm + "A"] = new Image();
+            images[arm + "A"].src = "../img/" + arm + "A.png";
+            images[arm + "B"] = new Image();
+            images[arm + "B"].src = "../img/" + arm + "B.png";
+        }
     }
-    init_three();
+    if (IS_THREE_VIEW) {
+        init_three();
+    }
     restart();
 }
 
@@ -142,15 +160,18 @@ function restart() {
         },
         fired: [],
         bursted: [],
-        winner: null,
     };
     state.teamA.enemy = state.teamB;
     state.teamB.enemy = state.teamA;
 
+    IS_VIEW = document.getElementById('view.select').value == "on";
+    IS_THREE_VIEW = document.getElementById('three.select').value == "on";
+    IS_RANKING = document.getElementById('ranking.select').value == "ranking";
+
     if (timer != null) {
         clearInterval(timer);
     }
-    timer = setInterval(loop, 20);
+    timer = setInterval(loop, interval);
 }
 
 function loop() {
@@ -165,14 +186,45 @@ function loop() {
     }
 
     view();
-    if (state.teamA.life <= 0) {
+    if (state.teamA.life <= 0 || state.teamB.life <= 0 || state.time >= 5000) {
+        var winner;
+        if (state.teamA.life > state.teamB.life) {
+            winner = document.getElementById('teamA.select').value;
+        } else if (state.teamA.life < state.teamB.life) {
+            winner = document.getElementById('teamB.select').value;
+        } else {
+            winner = null;
+        }
+
         clearInterval(timer);
-        document.getElementById("time_text").textContent = "teamB is win";
-        return;
-    } else if (state.teamB.life <= 0) {
-        clearInterval(timer);
-        document.getElementById("time_text").textContent = "teamA is win";
-        return;
+        document.getElementById("time_text").textContent = "Winner is " + winner;
+
+        if (IS_RANKING) {
+            if (rankingA != rankingB && winner != null) {
+                winners.push(winner);
+                document.getElementById("title_text").textContent = winners;
+            }
+
+            rankingA++;
+            if (rankingA >= TACTICS.length) {
+                rankingA = 0;
+                rankingB++;
+            }
+            if (rankingB >= TACTICS.length) {
+                var result = {};
+                for (var temp of winners) {
+                    if (result[temp] == null || result[temp] == undefined) {
+                        result[temp] = 0;
+                    }
+                    result[temp]++;
+                }
+                document.getElementById("title_text").textContent = result;
+                return;
+            }
+            document.getElementById('teamA.select').value = TACTICS[rankingA];
+            document.getElementById('teamB.select').value = TACTICS[rankingB];
+            restart();
+        }
     }
 
     state.time++;
@@ -184,6 +236,10 @@ function view() {
     document.getElementById("teamA.money").innerText = state.teamA.money;
     document.getElementById("teamB.life").value = state.teamB.life;
     document.getElementById("teamB.money").innerText = state.teamB.money;
+
+    if (!IS_VIEW) {
+        return;
+    }
 
     const canvas = document.getElementById('field_canvas');
     const ctx = canvas.getContext('2d');
@@ -235,7 +291,9 @@ function move() {
 
         if (conflict) {
             arm.y -= arm.speed;
-            arm.mesh.position.y -= arm.speed * ASPECT_RATIO;
+            if (IS_THREE_VIEW) {
+                arm.mesh.position.y -= arm.speed * ASPECT_RATIO;
+            }
             arm.stoped = false;
 
         } else if (arm.x < arm.destination) {
@@ -244,7 +302,9 @@ function move() {
             } else {
                 arm.x = Math.min(arm.x + 0.5 * arm.speed, arm.destination);
             }
-            arm.mesh.position.x = arm.x * ASPECT_RATIO;
+            if (IS_THREE_VIEW) {
+                arm.mesh.position.x = arm.x * ASPECT_RATIO;
+            }
 
         } else if (arm.x > arm.destination) {
             if (arm.friend == state.teamA) {
@@ -252,7 +312,9 @@ function move() {
             } else {
                 arm.x = Math.max(arm.x - arm.speed, arm.destination);
             }
-            arm.mesh.position.x = arm.x * ASPECT_RATIO;
+            if (IS_THREE_VIEW) {
+                arm.mesh.position.x = arm.x * ASPECT_RATIO;
+            }
         }
     }
 }
@@ -302,13 +364,17 @@ function attack_enemy() {
 
     for (var i = state.teamA.arms.length - 1; i >= 0; i--) {
         if (state.teamA.arms[i].life <= 0) {
-            scene.remove(state.teamA.arms[i].mesh);
+            if (IS_THREE_VIEW) {
+                scene.remove(state.teamA.arms[i].mesh);
+            }
             state.teamA.arms.splice(i, 1);
         }
     }
     for (var i = state.teamB.arms.length - 1; i >= 0; i--) {
         if (state.teamB.arms[i].life <= 0) {
-            scene.remove(state.teamB.arms[i].mesh);
+            if (IS_THREE_VIEW) {
+                scene.remove(state.teamB.arms[i].mesh);
+            }
             state.teamB.arms.splice(i, 1);
         }
     }
@@ -319,7 +385,9 @@ function attack_area() {
         if (["infantry", "bomber"].includes(state.teamA.arms[i].type) && state.teamA.arms[i].x >= WIDTH - 1) {
             state.teamB.life -= state.teamA.arms[i].attack;
             state.bursted.push([state.teamA.arms[i].x, state.teamA.arms[i].y]);
-            scene.remove(state.teamA.arms[i].mesh);
+            if (IS_THREE_VIEW) {
+                scene.remove(state.teamA.arms[i].mesh);
+            }
             state.teamA.arms.splice(i, 1);
         }
     }
@@ -328,7 +396,9 @@ function attack_area() {
         if (["infantry", "bomber"].includes(state.teamB.arms[i].type) && state.teamB.arms[i].x <= 0) {
             state.teamA.life -= state.teamB.arms[i].attack;
             state.bursted.push([state.teamB.arms[i].x, state.teamB.arms[i].y]);
-            scene.remove(state.teamB.arms[i].mesh);
+            if (IS_THREE_VIEW) {
+                scene.remove(state.teamB.arms[i].mesh);
+            }
             state.teamB.arms.splice(i, 1);
         }
     }
@@ -396,13 +466,15 @@ function generate(friend, type, y, opt) {
             }
         }
 
-        var geometry = new THREE.BoxGeometry(ARM_SIZE, ARM_SIZE, ARM_SIZE);
-        var material = new THREE.MeshPhongMaterial({color: ARM_TYPES[type].color});
-        var box = new THREE.Mesh(geometry, material);
-        box.position.x = x * ASPECT_RATIO;
-        box.position.y = HEIGHT * ASPECT_RATIO - y * ASPECT_RATIO;
-        box.position.z = ARM_SIZE / 2;
-        scene.add(box);
+        if (IS_THREE_VIEW) {
+            var geometry = new THREE.BoxGeometry(ARM_SIZE, ARM_SIZE, ARM_SIZE);
+            var material = new THREE.MeshPhongMaterial({color: ARM_TYPES[type].color});
+            var box = new THREE.Mesh(geometry, material);
+            box.position.x = x * ASPECT_RATIO;
+            box.position.y = HEIGHT * ASPECT_RATIO - y * ASPECT_RATIO;
+            box.position.z = ARM_SIZE / 2;
+            scene.add(box);
+        }
 
         friend.arms.push({
             friend: friend,
