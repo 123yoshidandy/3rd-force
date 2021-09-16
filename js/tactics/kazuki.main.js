@@ -23,37 +23,16 @@ export class Tactics {
 
             if (!safe) {
                 if (e.onAir) {
-                    result.push([e.y, "missile"]);
+                    result.push([e.y, "missile", {}]);
                 } else {
                     if (Math.random() < 0.3) {
-                        result.push([e.y, "attacker"]);
+                        result.push([e.y, "attacker", {}]);
                     } else {
-                        result.push([e.y, "tank"]);
+                        result.push([e.y, "tank", {}]);
                     }
                 }
             }
         }
-
-        if (friend.money >= 20000) {  // 金余剰のため勝ちに行く
-            var y = Math.floor(Math.random() * 100);
-            result.push([y, "rocket"]);
-            result.push([y, "rocket"]);
-            result.push([y, "rocket"]);
-            result.push([y, "rocket"]);
-            result.push([y, "missile"]);
-            result.push([y, "missile"]);
-            result.push([y, "infantry"]);
-            result.push([y, "infantry"]);
-            result.push([y, "infantry"]);
-            result.push([y, "infantry"]);
-            result.push([y, "infantry"]);
-            result.push([y, "infantry"]);
-            result.push([y, "infantry"]);
-            result.push([y, "infantry"]);
-            result.push([y, "infantry"]);
-            result.push([y, "infantry"]);
-        }
-
         return result;
     }
 }

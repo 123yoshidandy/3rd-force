@@ -240,21 +240,19 @@ function move() {
 
         } else if (arm.x < arm.destination) {
             if (arm.friend == state.teamA) {
-                arm.x += arm.speed;
-                arm.mesh.position.x += arm.speed * ASPECT_RATIO;
+                arm.x = Math.min(arm.x + arm.speed, arm.destination);
             } else {
-                arm.x += 0.5 * arm.speed;
-                arm.mesh.position.x += 0.5 * arm.speed * ASPECT_RATIO;
+                arm.x = Math.min(arm.x + 0.5 * arm.speed, arm.destination);
             }
+            arm.mesh.position.x = arm.x * ASPECT_RATIO;
 
         } else if (arm.x > arm.destination) {
             if (arm.friend == state.teamA) {
-                arm.x -= 0.5 * arm.speed;
-                arm.mesh.position.x -= 0.5 * arm.speed * ASPECT_RATIO;
+                arm.x = Math.max(arm.x - 0.5 * arm.speed, arm.destination);
             } else {
-                arm.x -= arm.speed;
-                arm.mesh.position.x -= arm.speed * ASPECT_RATIO;
+                arm.x = Math.max(arm.x - arm.speed, arm.destination);
             }
+            arm.mesh.position.x = arm.x * ASPECT_RATIO;
         }
     }
 }
@@ -360,19 +358,30 @@ async function command() {
     }
 
     for (var result of result1) {
-        generate(state.teamA, result[1], result[0]);
+        generate(state.teamA, result[1], result[0], {});  // TODO
     }
 
     for (var result of result2) {
-        generate(state.teamB, result[1], HEIGHT - 1 - result[0]);
+        generate(state.teamB, result[1], HEIGHT - 1 - result[0], {});  // TODO
     }
 }
 
-function generate(friend, type, y) {
-    if (friend.money >= ARM_TYPES[type].cost) {
+function generate(friend, type, y, opt) {
+    var life = ARM_TYPES[type].life * getOpt(opt, "life");
+    var attack = ARM_TYPES[type].attack * getOpt(opt, "attack");
+    var range = ARM_TYPES[type].range * getOpt(opt, "range");
+    var cooltime = ARM_TYPES[type].cooltime * getOpt(opt, "cooltime");
+    var speed = ARM_TYPES[type].speed * getOpt(opt, "speed");
+    var cost = ARM_TYPES[type].cost
+                    * getOpt(opt, "life")
+                    * getOpt(opt, "attack")
+                    * getOpt(opt, "range")
+                    * (1 / getOpt(opt, "cooltime"))
+                    * getOpt(opt, "speed");
 
+    if (friend.money >= cost) {
         var x = 0;
-        var destination = WIDTH - ARM_TYPES[type].range;
+        var destination = WIDTH - range;
         if (["infantry", "bomber"].includes(type)) {
             destination = WIDTH;
         }
@@ -401,11 +410,11 @@ function generate(friend, type, y) {
             type: type,
             onAir: ARM_TYPES[type].onAir,
             vsAir: ARM_TYPES[type].vsAir,
-            life: ARM_TYPES[type].life,
-            attack: ARM_TYPES[type].attack,
-            range: ARM_TYPES[type].range,
-            cooltime: ARM_TYPES[type].cooltime,
-            speed: ARM_TYPES[type].speed,
+            life: life,
+            attack: attack,
+            range: range,
+            cooltime: cooltime,
+            speed: speed,
             destination: destination,
             fired: -100,
             x: x,
@@ -413,8 +422,15 @@ function generate(friend, type, y) {
             stoped: false,
             mesh: box,
         });
-        friend.money -= ARM_TYPES[type].cost;
+        friend.money -= cost;
     }
+}
+
+function getOpt(opt, key) {
+    result = key in opt ? opt[key] : 1.0;
+    result = Math.min(result, 1.5);
+    result = Math.max(result, 0.5);
+    return result;
 }
 
 

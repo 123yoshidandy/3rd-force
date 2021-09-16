@@ -18,14 +18,14 @@ export class Tactics {
             }
             if (!safe) {
                 if (e.onAir) {
-                    result.push([e.y, "missile"]);
+                    result.push([e.y, "missile", {}]);
                 } else {
-                    result.push([e.y, "tank"]);
+                    result.push([e.y, "tank", {}]);
                 }
             }
         }
 
-        result.push([Math.floor(Math.random() * 100), "infantry"]);
+        result.push([Math.floor(Math.random() * 100), "infantry", {}]);
 
         return result;
     }
