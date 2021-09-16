@@ -12,6 +12,7 @@ const ARM_TYPES = {
     infantry: {
         type: "infantry",
         onAir: false,
+        vsEarth: true,
         vsAir: false,
         life: 100,
         attack: 100,
@@ -25,6 +26,7 @@ const ARM_TYPES = {
     tank: {
         type: "tank",
         onAir: false,
+        vsEarth: true,
         vsAir: false,
         life: 400,
         attack: 200,
@@ -38,6 +40,7 @@ const ARM_TYPES = {
     rocket: {
         type: "rocket",
         onAir: false,
+        vsEarth: true,
         vsAir: false,
         life: 200,
         attack: 100,
@@ -51,6 +54,7 @@ const ARM_TYPES = {
     missile: {
         type: "missile",
         onAir: false,
+        vsEarth: false,
         vsAir: true,
         life: 200,
         attack: 200,
@@ -61,9 +65,24 @@ const ARM_TYPES = {
         cost: 1000,
         color: "blue",
     },
+    cannon: {
+        type: "cannon",
+        onAir: false,
+        vsEarth: true,
+        vsAir: true,
+        life: 300,
+        attack: 100,
+        range: 20,
+        cooltime: 10,
+        bullets: 8,
+        speed: 1.0,
+        cost: 1000,
+        color: "gray",
+    },
     attacker: {
         type: "attacker",
         onAir: true,
+        vsEarth: true,
         vsAir: false,
         life: 200,
         attack: 400,
@@ -77,6 +96,7 @@ const ARM_TYPES = {
     fighter: {
         type: "fighter",
         onAir: true,
+        vsEarth: false,
         vsAir: true,
         life: 400,
         attack: 400,
@@ -90,7 +110,8 @@ const ARM_TYPES = {
     bomber: {
         type: "bomber",
         onAir: true,
-        vsAir: true,
+        vsEarth: false,
+        vsAir: false,
         life: 200,
         attack: 100,
         range: 0,
@@ -353,7 +374,7 @@ function attack_enemy() {
                 if (armA.x <= armB.x
                     && armB.x <= armA.x + armA.range
                     && Math.abs(armA.y - armB.y) <= FIRE_RANGE
-                    && ((armA.vsAir && armB.onAir) || (!armA.vsAir && !armB.onAir))
+                    && ((armA.vsAir && armB.onAir) || (armA.vsEarth && !armB.onAir))
                 ) {
                     targets.push(armB);
                 }
@@ -375,7 +396,7 @@ function attack_enemy() {
                 if (armA.x <= armB.x
                     && armB.x - armB.range <= armA.x
                     && Math.abs(armA.y - armB.y) <= FIRE_RANGE
-                    && ((armB.vsAir && armA.onAir) || (!armB.vsAir && !armA.onAir))
+                    && ((armB.vsAir && armA.onAir) || (armB.vsEarth && !armA.onAir))
                 ) {
                     targets.push(armA);
                 }
@@ -513,6 +534,7 @@ function generate(friend, type, y, opt) {
             enemy: friend.enemy,
             type: type,
             onAir: ARM_TYPES[type].onAir,
+            vsEarth: ARM_TYPES[type].vsEarth,
             vsAir: ARM_TYPES[type].vsAir,
             life: life,
             attack: attack,

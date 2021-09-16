@@ -37,6 +37,7 @@ https://yoshida-kazuki.github.io/game-3rd-force/
 | tank     | 戦車         | 耐久力・攻撃力に優れる戦闘の要 |
 | rocket   | ロケット砲   | 攻撃力は低いが遠距離攻撃が可能 |
 | missile  | 対空ミサイル | 航空機への攻撃が得意 |
+| cannon   | 機関砲       | 地上・航空両方への攻撃が可能 |
 | attacker | 攻撃機       | コストは高いが、対地性能に優れる航空機 |
 | fighter  | 戦闘機       | コストは高いが、対空性能に優れる航空機 |
 | bomber   | 爆撃機       | コストは高いが、高速で陣地攻撃可能な航空機 |
@@ -44,7 +45,6 @@ https://yoshida-kazuki.github.io/game-3rd-force/
 ## TODO
 
 * 機能（マメッコ実装済）
-    * 機関砲の導入
     * 兵器カスタマイズの本導入
     * 武器weaponの導入
 * 機能（オリジナル）
