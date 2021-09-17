@@ -23,15 +23,15 @@ https://yoshida-kazuki.github.io/game-3rd-force/
    https://github.com/yoshida-kazuki/game-3rd-force
 2. 戦術アルゴリズムを実装する。<br>
    https://github.com/yoshida-kazuki/game-3rd-force/tree/main/js/tactics
-3. 戦術アルゴリズムをアルゴリズム一覧に追加する。<br>
-   https://github.com/yoshida-kazuki/game-3rd-force/blob/main/js/main.js#L3
+3. 戦術アルゴリズムをアルゴリズム一覧（以下のソースコードの変数TACTICS）に追加する。<br>
+   https://github.com/yoshida-kazuki/game-3rd-force/blob/main/js/main.js
 4. 以下などを活用し、動作検証する。<br>
    https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer
 5. いい感じにできたら、yoshida-kazukiのリポジトリにプルリクエストを発行する。
 
 ## 兵器一覧
 
-| ID       | 兵器名                                                | 特徴（[詳細はこちら](https://github.com/yoshida-kazuki/game-3rd-force/blob/main/js/main.js#L5)） |
+| ID       | 兵器名                                                | 特徴（詳細は[こちら](https://github.com/yoshida-kazuki/game-3rd-force/blob/main/js/main.js)のARM_TYPESを参照） |
 | --       | --                                                    | -- |
 | infantry | <img src="./img/infantryA.png" width="20"> 歩兵       | 戦闘力は低いが陣地にも攻撃可能 |
 | tank     | <img src="./img/tankA.png" width="20"> 戦車           | 耐久力・攻撃力に優れる戦闘の要 |
