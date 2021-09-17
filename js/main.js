@@ -162,9 +162,9 @@ function init() {
     if (IS_VIEW) {
         for (var arm in ARM_TYPES){
             images[arm + "A"] = new Image();
-            images[arm + "A"].src = "../img/" + arm + "A.png";
+            images[arm + "A"].src = "./img/" + arm + "A.png";
             images[arm + "B"] = new Image();
-            images[arm + "B"].src = "../img/" + arm + "B.png";
+            images[arm + "B"].src = "./img/" + arm + "B.png";
         }
     }
     if (IS_THREE_VIEW) {
