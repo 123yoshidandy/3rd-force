@@ -131,9 +131,9 @@ var images = {};
 var IS_VIEW = true;
 var IS_THREE_VIEW = false;
 var IS_RANKING = true;
-var interval = 20;
+var interval = 0;
 
-var winners = [];
+var winners = {};
 var rankingA = 0;
 var rankingB = 0;
 
@@ -229,8 +229,11 @@ function loop() {
 
         if (IS_RANKING) {
             if (rankingA != rankingB && winner != null) {
-                winners.push(winner);
-                document.getElementById("title_text").textContent = winners;
+                if (winners[winner] == undefined || winners[winner] == null) {
+                    winners[winner] = 0;
+                }
+                winners[winner]++;
+                document.getElementById("ranking_text").textContent = JSON.stringify(winners);
             }
 
             rankingA++;
@@ -239,14 +242,7 @@ function loop() {
                 rankingB++;
             }
             if (rankingB >= TACTICS.length) {
-                var result = {};
-                for (var temp of winners) {
-                    if (result[temp] == null || result[temp] == undefined) {
-                        result[temp] = 0;
-                    }
-                    result[temp]++;
-                }
-                document.getElementById("title_text").textContent = result;
+                document.getElementById("ranking_text").textContent = JSON.stringify(winners);
                 return;
             }
             document.getElementById('teamA.select').value = TACTICS[rankingA];
