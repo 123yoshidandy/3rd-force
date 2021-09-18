@@ -140,11 +140,6 @@ var rankingB = 0;
 window.addEventListener('load', init);
 
 function init() {
-
-    IS_VIEW = document.getElementById('view.select').value == "on";
-    IS_THREE_VIEW = document.getElementById('three.select').value == "on";
-    IS_RANKING = document.getElementById('ranking.select').value == "ranking";
-
     var selectTeamA = document.getElementById("teamA.select");
     for (var i of TACTICS) {
         var optionElement = document.createElement("option");
@@ -159,6 +154,14 @@ function init() {
         optionElement.value = i;
         selectTeamB.appendChild(optionElement);
     }
+    restart();
+}
+
+function restart() {
+    IS_VIEW = document.getElementById('view.select').value == "on";
+    IS_THREE_VIEW = document.getElementById('three.select').value == "on";
+    IS_RANKING = document.getElementById('ranking.select').value == "ranking";
+
     if (IS_VIEW) {
         for (var arm in ARM_TYPES){
             images[arm + "A"] = new Image();
@@ -170,10 +173,7 @@ function init() {
     if (IS_THREE_VIEW) {
         init_three();
     }
-    restart();
-}
 
-function restart() {
     state = {
         time: 0,
         teamA: {
@@ -504,10 +504,7 @@ function generate(friend, type, y, opt) {
 
     if (friend.money >= cost) {
         var x = 0;
-        var destination = WIDTH - range;
-        if (["infantry", "bomber"].includes(type)) {
-            destination = WIDTH;
-        }
+        var destination = WIDTH;
         if (friend == state.teamB) {
             x = WIDTH;
             destination = WIDTH - destination;
