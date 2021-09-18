@@ -3,7 +3,7 @@ export class Tactics {
         setDestination();
         setReturn();
 
-        var result = [];
+        var result = [];  // [ [y , 兵種 , option] ]
 
         if (friend.money < 2000) {  // 金が貯まるまで待機
             return result;
@@ -119,7 +119,7 @@ export class Tactics {
                     self.return = true;
                     for (var e of enemy.arms) {
                         if (self.x < e.x && Math.abs(e.y - self.y) <= 10) {  // 前方かつ縦範囲内
-                            if (["tank", "rocket, infantry"].includes(e.type)) {
+                            if (["tank", "rocket", "infantry"].includes(e.type)) {
                                 self.return = false;
                             }
                         }
