@@ -1,59 +1,62 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8">
-        <title></title>
-        <link rel="manifest" href="./manifest.json">
-        <link rel="stylesheet" href="./css/style.css">
-    </head>
-    <body>
-        <h1 id="title_text">3rd force</h1>
-        <select id="view.select">
-            <option value="on">view:on</option>
-            <option value="off">view:off</option>
-        </select>
-        <select id="three.select">
-            <option value="on">three:on</option>
-            <option value="off">three:off</option>
-        </select>
-        <select id="ranking.select">
-            <option value="normal">normal</option>
-            <option value="ranking">ranking</option>
-        </select>
-        <h2 id="time_text">-</h2>
-        <table id="score_table" class="score_table">
-            <tr>
-                <td><input type="button" value="Restart" onclick="restart();"/></td>
-                <td><select id="teamA.select"></select></td>
-                <td><select id="teamB.select"></select></td>
-            </tr>
-            <tr>
-                <td>Life</td>
-                <td><meter id="teamA.life" min="0" max="1000" low="301" high="701" optimum="900" value="1000"></meter></td>
-                <td><meter id="teamB.life" min="0" max="1000" low="301" high="701" optimum="900" value="1000"></meter></td>
-            </tr>
-            <tr>
-                <td>Money</td>
-                <td id="teamA.money">-</td>
-                <td id="teamB.money">-</td>
-            </tr>
-        </table>
-        <p></p>
-        <canvas id="field_canvas" width="1000" height="500"></canvas>
-        <canvas id="three_Canvas" width="1000" height="500"></canvas>
-        <h2 id="ranking_text"></h2>
-        <script>
-            window.addEventListener('load', function() {
-              if ('serviceWorker' in navigator) {
+
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <link rel="manifest" href="./manifest.json">
+    <link rel="stylesheet" href="./css/style.css">
+</head>
+
+<body>
+    <h1 id="title_text">3rd force</h1>
+    <select id="view.select">
+        <option value="on">view:on</option>
+        <option value="off">view:off</option>
+    </select>
+    <select id="three.select">
+        <option value="on">three:on</option>
+        <option value="off">three:off</option>
+    </select>
+    <select id="ranking.select">
+        <option value="normal">normal</option>
+        <option value="ranking">ranking</option>
+    </select>
+    <h2 id="time_text">-</h2>
+    <table id="score_table" class="score_table">
+        <tr>
+            <td><input type="button" value="Restart" onclick="restart();" /></td>
+            <td><select id="teamA.select"></select></td>
+            <td><select id="teamB.select"></select></td>
+        </tr>
+        <tr>
+            <td>Life</td>
+            <td><meter id="teamA.life" min="0" max="1000" low="301" high="701" optimum="900" value="1000"></meter></td>
+            <td><meter id="teamB.life" min="0" max="1000" low="301" high="701" optimum="900" value="1000"></meter></td>
+        </tr>
+        <tr>
+            <td>Money</td>
+            <td id="teamA.money">-</td>
+            <td id="teamB.money">-</td>
+        </tr>
+    </table>
+    <p></p>
+    <canvas id="field_canvas" width="1000" height="500"></canvas>
+    <canvas id="three_Canvas" width="1000" height="500"></canvas>
+    <h2 id="ranking_text"></h2>
+    <script>
+        window.addEventListener('load', function () {
+            if ('serviceWorker' in navigator) {
                 navigator.serviceWorker.register('./service-worker.js')
-                  .then(function() {
-                    console.log('Service Worker Registered');
-                  });
-              }
-            });
-        </script>
-        <script src="https://unpkg.com/three@0.131.3/build/three.min.js"></script>
-        <script src="https://unpkg.com/three@0.131.3/examples/js/controls/OrbitControls.js"></script>
-        <script src="./js/main.js"></script>
-    </body>
+                    .then(function () {
+                        console.log('Service Worker Registered');
+                    });
+            }
+        });
+    </script>
+    <script src="https://unpkg.com/three@0.131.3/build/three.min.js"></script>
+    <script src="https://unpkg.com/three@0.131.3/examples/js/controls/OrbitControls.js"></script>
+    <script src="./js/main.js"></script>
+</body>
+
 </html>

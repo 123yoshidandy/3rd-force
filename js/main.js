@@ -163,7 +163,7 @@ function restart() {
     IS_RANKING = document.getElementById('ranking.select').value == "ranking";
 
     if (IS_VIEW) {
-        for (var arm in ARM_TYPES){
+        for (var arm in ARM_TYPES) {
             images[arm + "A"] = new Image();
             images[arm + "A"].src = "./img/" + arm + "A.png";
             images[arm + "B"] = new Image();
@@ -179,12 +179,12 @@ function restart() {
         teamA: {
             life: 1000,
             money: 1000,
-            arms : [],
+            arms: [],
         },
         teamB: {
             life: 1000,
             money: 1000,
-            arms : [],
+            arms: [],
         },
         fired: [],
         bursted: [],
@@ -296,7 +296,7 @@ function view() {
 
     for (var bursted of state.bursted) {
         ctx.beginPath();
-        ctx.arc(bursted[0] * ASPECT_RATIO, bursted[1] * ASPECT_RATIO, 100, 0 * Math.PI / 180, 360 * Math.PI / 180,);
+        ctx.arc(bursted[0] * ASPECT_RATIO, bursted[1] * ASPECT_RATIO, 100, 0 * Math.PI / 180, 360 * Math.PI / 180);
         ctx.fillStyle = "red";
         ctx.fill();
     }
@@ -454,7 +454,7 @@ async function command() {
     const path1 = "./tactics/" + element1.value + ".js";
     const module1 = await import(path1);
     const tactics1 = new module1.Tactics();
-    const result1= tactics1.exec(state.time, state.teamA, state.teamB);
+    const result1 = tactics1.exec(state.time, state.teamA, state.teamB);
 
     for (var arm of state.teamA.arms.concat(state.teamB.arms)) {
         arm.x = WIDTH - 1 - arm.x;
@@ -491,12 +491,12 @@ function generate(friend, type, y, opt) {
     var bullets = ARM_TYPES[type].bullets * getOpt(opt, "bullets");
     var speed = ARM_TYPES[type].speed * getOpt(opt, "speed");
     var cost = ARM_TYPES[type].cost
-                    * getOpt(opt, "life")
-                    * getOpt(opt, "attack")
-                    * getOpt(opt, "range")
-                    * (1 / getOpt(opt, "cooltime"))
-                    * getOpt(opt, "bullets")
-                    * getOpt(opt, "speed");
+        * getOpt(opt, "life")
+        * getOpt(opt, "attack")
+        * getOpt(opt, "range")
+        * (1 / getOpt(opt, "cooltime"))
+        * getOpt(opt, "bullets")
+        * getOpt(opt, "speed");
 
     if (friend.money >= cost) {
         var x = 0;
@@ -514,7 +514,7 @@ function generate(friend, type, y, opt) {
 
         if (IS_THREE_VIEW) {
             var geometry = new THREE.BoxGeometry(ARM_SIZE, ARM_SIZE, ARM_SIZE);
-            var material = new THREE.MeshPhongMaterial({color: ARM_TYPES[type].color});
+            var material = new THREE.MeshPhongMaterial({ color: ARM_TYPES[type].color });
             var box = new THREE.Mesh(geometry, material);
             box.position.x = x * ASPECT_RATIO;
             box.position.y = HEIGHT * ASPECT_RATIO - y * ASPECT_RATIO;
@@ -578,7 +578,7 @@ function init_three() {
 
     camera.position.set(-50, -50, 250);
     camera.lookAt(new THREE.Vector3(WIDTH * ASPECT_RATIO, HEIGHT * ASPECT_RATIO, 0));
-    camera.rotation.x =  0.70;
+    camera.rotation.x = 0.70;
     camera.rotation.y = -0.70;
     camera.rotation.z = -0.10;
     // TODO: controlへの適用
@@ -587,7 +587,7 @@ function init_three() {
     scene.add(axes);
 
     var geometry = new THREE.BoxGeometry(WIDTH * ASPECT_RATIO, HEIGHT * ASPECT_RATIO, 1);
-    var material = new THREE.MeshPhongMaterial({color: 0x555555});
+    var material = new THREE.MeshPhongMaterial({ color: 0x555555 });
     var box = new THREE.Mesh(geometry, material);
     box.position.x = WIDTH * ASPECT_RATIO / 2;
     box.position.y = HEIGHT * ASPECT_RATIO / 2;

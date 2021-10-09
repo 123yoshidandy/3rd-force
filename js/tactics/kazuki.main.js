@@ -43,26 +43,26 @@ export class Tactics {
             }
         }
 
-        if (friend.money> 10000) {
+        if (friend.money > 10000) {
             if (Math.random() < 0.6) {
-                result.push([  0,   "tank", {}]);
-                result.push([  7, "rocket", {}]);
-                result.push([ 14,   "tank", {}]);
-                result.push([ 21, "rocket", {}]);
+                result.push([0, "tank", {}]);
+                result.push([7, "rocket", {}]);
+                result.push([14, "tank", {}]);
+                result.push([21, "rocket", {}]);
 
-                result.push([ 79, "rocket", {}]);
-                result.push([ 86,   "tank", {}]);
-                result.push([ 93, "rocket", {}]);
-                result.push([100,   "tank", {}]);
+                result.push([79, "rocket", {}]);
+                result.push([86, "tank", {}]);
+                result.push([93, "rocket", {}]);
+                result.push([100, "tank", {}]);
             } else if (Math.random() < 0.5) {
-                result.push([  0, "missile", {}]);
-                result.push([  7, "missile", {}]);
-                result.push([ 93, "missile", {}]);
+                result.push([0, "missile", {}]);
+                result.push([7, "missile", {}]);
+                result.push([93, "missile", {}]);
                 result.push([100, "missile", {}]);
             } else {
-                result.push([  0, "infantry", {}]);
-                result.push([  7, "infantry", {}]);
-                result.push([ 93, "infantry", {}]);
+                result.push([0, "infantry", {}]);
+                result.push([7, "infantry", {}]);
+                result.push([93, "infantry", {}]);
                 result.push([100, "infantry", {}]);
             }
         }
