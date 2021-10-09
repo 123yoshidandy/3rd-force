@@ -1,7 +1,7 @@
 {
-    "name": "PWA Sample",
-    "short_name": "PWA",
-    "background_color": "#fc980c",
+    "name": "3rd Force",
+    "short_name": "3rd Foce",
+    "background_color": "#263238",
     "icons": [
         {
             "src": "./img/icon256.png",
