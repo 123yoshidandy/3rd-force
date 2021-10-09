@@ -3,11 +3,11 @@
     "short_name": "PWA",
     "background_color": "#fc980c",
     "icons": [{
-        "src": "./img/infantryA.png",
+        "src": "./img/icon256.png",
         "sizes": "256x256",
         "type": "image/png"
       },{
-        "src": "./img/infantryA.png",
+        "src": "./img/icon192.png",
         "sizes": "192x192",
         "type": "image/png"
       }],
