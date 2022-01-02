@@ -1,6 +1,6 @@
 # 3rd Force
 
-https://yoshida-kazuki.github.io/game-3rd-force/
+https://123yoshidandy.github.io/game-3rd-force/
 
 ## はじめに
 
