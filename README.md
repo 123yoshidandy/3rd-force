@@ -1,6 +1,6 @@
 # 3rd Force
 
-https://123yoshidandy.github.io/game-3rd-force/
+https://123yoshidandy.github.io/3rd-force/
 
 ## はじめに
 
